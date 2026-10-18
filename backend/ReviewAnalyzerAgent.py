@@ -20,13 +20,6 @@ logger.addHandler(handler)
 
 load_dotenv()
 
-# Use Nebius API for all agents
-llm = Nebius(
-    id='nvidia/Nemotron-3-Ultra-550b-a55b',
-    api_key=os.getenv("NEBIUS_API_KEY"),
-    max_tokens=8192,
-)
-
 
 class SentimentScore(BaseModel):
     positive: int = Field(..., description="Positive sentiment percentage (0-100)")
@@ -50,6 +43,11 @@ class ReviewAnalysis(BaseModel):
 
 
 def review_analyzer_agent() -> Agent:
+    llm = Nebius(
+        id='nvidia/Nemotron-3-Ultra-550b-a55b',
+        api_key=os.getenv("NEBIUS_API_KEY"),
+        max_tokens=8192,
+    )
     agent = Agent(
         name="Fashion Review Analyzer Agent",
         model=llm,
@@ -118,6 +116,11 @@ def review_analyzer_agent() -> Agent:
             - Prioritize verified purchase reviews
             - Look for specific details rather than generic praise/complaints
             - Balance positive and negative feedback objectively
+
+        CRITICAL OUTPUT FORMAT:
+            - Your final output MUST be a raw JSON object matching the ReviewAnalysis schema exactly.
+            - Use "overall_rating", "total_reviews" etc. as TOP-LEVEL keys.
+            - Do NOT wrap your output in {"response": ...} or any container object.
 
         7. Per-claim citations (claims field)
             - For EVERY rating, key pro, key con, or theme, add a CitedClaim entry:

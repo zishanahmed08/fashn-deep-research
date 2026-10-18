@@ -20,13 +20,6 @@ logger.addHandler(handler)
 
 load_dotenv()
 
-# Use Nebius API for all agents with SQLite database
-llm = Nebius(
-    id='nvidia/Nemotron-3-Ultra-550b-a55b',
-    api_key=os.getenv("NEBIUS_API_KEY"),
-    max_tokens=8192,
-)
-
 
 class ProductListing(BaseModel):
     website_name: str = Field(
@@ -58,6 +51,11 @@ class PriceComparisonResult(BaseModel):
 
 
 def price_agent() -> Agent:
+    llm = Nebius(
+        id='nvidia/Nemotron-3-Ultra-550b-a55b',
+        api_key=os.getenv("NEBIUS_API_KEY"),
+        max_tokens=8192,
+    )
     agent = Agent(
         name="Fashion Price Comparison Agent",
         model=llm,
@@ -129,6 +127,11 @@ def price_agent() -> Agent:
             - Include all URLs you actively used in the sources_checked field
             - If you cannot find the product on other websites, still return the original listing
               and explain in the search_summary why no other listings were found
+
+        CRITICAL OUTPUT FORMAT:
+            - Your final output MUST be a raw JSON object matching the PriceComparisonResult schema exactly.
+            - Use "original_product_name", "original_product_url" etc. as TOP-LEVEL keys.
+            - Do NOT wrap your output in {"response": ...} or any container object.
 
         6. Per-claim citations (claims field)
             - For EVERY price or availability fact, add a CitedClaim entry:
