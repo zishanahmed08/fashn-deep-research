@@ -123,11 +123,17 @@ def root():
 
 @app.get("/health")
 def health_check():
+    nebius_key = os.getenv("NEBIUS_API_KEY", "")
+    tavily_key = os.getenv("TAVILY_API_KEY", "")
     return {
         "status": "healthy",
         "service": "FashnAI API",
         "model": "nvidia/nemotron-3-super-120b-a12b (Nebius Token Factory)",
-        "payments": "x402 USDC"
+        "payments": "x402 USDC",
+        "env_check": {
+            "NEBIUS_API_KEY": f"{nebius_key[:8]}..." if nebius_key else "NOT SET",
+            "TAVILY_API_KEY": f"{tavily_key[:8]}..." if tavily_key else "NOT SET",
+        }
     }
 
 
