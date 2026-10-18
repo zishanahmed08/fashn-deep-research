@@ -1,26 +1,28 @@
 # FashnAI
 
-AI-powered fashion research and price comparison system using multi-agent architecture. Specialized in apparel and footwear analysis.
+AI-powered fashion product due-diligence system using a multi-agent architecture built on Nebius Token Factory. Specialized in apparel and footwear analysis with per-claim citations and independent fact-checking.
 
-## 🌐 Live Demo
+## Live Demo
 
-- **Frontend**: https://magenta-klepon-578cf8.netlify.app/
-- **Backend API**: https://fashnai-api.onrender.com
+- **Frontend**: https://frontend-six-beta-89.vercel.app/
+- **Backend API**: https://port8000-pt7m5w845bntrd3.tunnel.applications.eu-west2.nebius.cloud
 
 ## Features
 
-- **Fashion Price Comparison Agent**: Finds the same fashion product (clothing, shoes, accessories) across multiple fashion e-commerce websites and compares prices
-- **Review Analysis Agent**: Analyzes customer reviews, sentiment, pros/cons, and provides comprehensive insights
-- **Product Specifications Agent**: Extracts detailed product specifications including materials, sizes, care instructions, and features
-- **Virtual Try-On AI**: AI-powered virtual try-on that provides personalized fit analysis, size recommendations, and styling suggestions based on user characteristics
+- **Fashion Price Comparison Agent**: Finds the same fashion product across multiple e-commerce websites and compares prices with per-claim citations
+- **Review Analysis Agent**: Analyzes customer reviews, sentiment, pros/cons with source quotes and confidence scores
+- **Product Specifications Agent**: Extracts detailed specifications including materials, sizes, care instructions, and sustainability claims
+- **FactChecker Agent**: Independently verifies every claim against non-brand sources using Tavily; returns verified/contested/unsupported verdicts
+- **Due Diligence Endpoint**: Runs all three research agents in parallel, then routes all claims through the fact-checker for a full `DueDiligenceReport`
+- **Virtual Try-On AI**: AI-powered virtual try-on providing personalized fit analysis and size recommendations
 
 ## Prerequisites
 
 - Python 3.13 or higher
 - [uv](https://github.com/astral-sh/uv) package manager
 - Node.js 18+ and npm (for frontend)
-- Gemini API key (for Google AI)
-- Serper API key (for web search)
+- Nebius API key (Token Factory)
+- Tavily API key (web search + extraction)
 
 ## Installation
 
@@ -188,36 +190,35 @@ print(result.content)
 ```
 fashnai/
 ├── backend/
-│   ├── PriceAgent.py            # Fashion price comparison agent
-│   ├── ReviewAnalyzerAgent.py   # Review analysis agent
-│   ├── ProductSpecsAgent.py     # Product specifications agent
-│   ├── VirtualTryOnAgent.py     # Virtual try-on AI agent
-│   ├── api.py                   # FastAPI server
-│   ├── api_key_manager.py       # API key management
-│   └── playground.py            # AgentOS playground
-├── frontend/                    # Next.js frontend application
+│   ├── PriceAgent.py            # Price comparison agent (Nemotron)
+│   ├── ReviewAnalyzerAgent.py   # Review analysis agent (Nemotron)
+│   ├── ProductSpecsAgent.py     # Specs extraction agent (Nemotron)
+│   ├── FactCheckerAgent.py      # Independent fact-checker (Nemotron)
+│   ├── DiligenceOrchestrator.py # Parallel orchestration + due-diligence report
+│   ├── VirtualTryOnAgent.py     # Virtual try-on (MiniCPM-V vision model)
+│   ├── schemas.py               # Shared Pydantic types (CitedClaim, CheckedClaim, etc.)
+│   ├── cache/                   # Pre-cached demo responses (baked into Docker image)
+│   └── api.py                   # FastAPI server
+├── frontend/                    # Next.js app (deployed on Vercel)
 │   ├── app/
 │   │   ├── page.tsx            # Home page
-│   │   ├── product/[url]/      # Product details page
-│   │   ├── try-on/             # Virtual try-on page
+│   │   ├── product/            # Product analysis page (3 parallel agents)
+│   │   ├── due-diligence/      # Due diligence page with per-claim verdicts
 │   │   └── layout.tsx          # App layout
-│   ├── package.json            # Frontend dependencies
-│   └── ...
-├── .env                        # Environment variables (not in git)
-├── pyproject.toml              # Backend dependencies
-├── start.sh                    # Startup script for full application
-└── README.md                   # This file
+│   └── package.json
+├── Dockerfile                   # Backend image (deployed on Nebius Serverless AI)
+├── .env                         # Environment variables (committed with placeholder values)
+└── pyproject.toml               # Backend dependencies
 ```
 
 ## Dependencies
 
 **Backend:**
 - **agno**: Multi-agent framework
-- **google-genai**: Google Gemini AI models (including Vision API for virtual try-on)
+- **nebius**: Nebius Token Factory model integration (Nemotron, MiniCPM-V)
 - **crawl4ai**: Web scraping and crawling
-- **google-search-results**: Serper API integration
+- **tavily-python**: Web search and extraction
 - **fastapi**: REST API framework
-- **pillow**: Image processing
 - **pydantic**: Data validation and schema definition
 
 **Frontend:**
@@ -263,16 +264,9 @@ python -m pytest
 
 ## API Configuration
 
-The agents use the following APIs:
-
-- **Gemini API**: Used for the AI models (Gemini 2.5 Flash for text analysis, Gemini 3 Flash Image for virtual try-on)
-- **Serper API**: Used for web search functionality
-
-Both API keys should be configured in your `.env` file as shown in the setup section.
-
 **API Key Usage:**
-- `NEBIUS_API_KEY`: Used by all agents (Nebius AI Studio)
-- `TAVILY_API_KEY`: Used for web search and extraction (Tavily)
+- `NEBIUS_API_KEY`: All agents run on Nebius Token Factory (`nvidia/nemotron-3-super-120b-a12b` for research agents and fact-checker, `openbmb/MiniCPM-V-4_5` for virtual try-on)
+- `TAVILY_API_KEY`: Web search and page extraction used by all research agents
 
 ## Troubleshooting
 

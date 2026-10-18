@@ -24,7 +24,7 @@ load_dotenv()
 
 # Use Nebius API for all agents
 llm = Nebius(
-    id='deepseek-ai/DeepSeek-V4-Flash-0731',
+    id='nvidia/nemotron-3-super-120b-a12b',
     api_key=os.getenv("NEBIUS_API_KEY"),
     max_tokens=8192,
 )

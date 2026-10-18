@@ -126,7 +126,7 @@ def health_check():
     return {
         "status": "healthy",
         "service": "FashnAI API",
-        "model": "deepseek-ai/DeepSeek-V4-Flash-0731 (Nebius)",
+        "model": "nvidia/nemotron-3-super-120b-a12b (Nebius Token Factory)",
         "payments": "x402 USDC"
     }
 

@@ -67,7 +67,7 @@ interface ProductData {
   status: string;
 }
 
-type AnalysisStep = 'prices' | 'reviews' | 'specs' | 'completed';
+type AgentStatus = 'running' | 'done' | 'idle';
 
 function ProductDetailsContent() {
   const searchParams = useSearchParams();
@@ -76,7 +76,9 @@ function ProductDetailsContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'prices' | 'reviews' | 'specs'>('prices');
-  const [currentStep, setCurrentStep] = useState<AnalysisStep>('prices');
+  const [agentStatus, setAgentStatus] = useState<Record<string, AgentStatus>>({
+    prices: 'idle', reviews: 'idle', specs: 'idle',
+  });
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -88,51 +90,25 @@ function ProductDetailsContent() {
           return;
         }
 
-        console.log('Starting analysis for:', productUrl);
         setLoading(true);
         setError(null);
+        setAgentStatus({ prices: 'running', reviews: 'running', specs: 'running' });
 
-        // 1. Price Agent
-        setCurrentStep('prices');
-        console.log('Step 1: Fetching prices...');
-        const pricesResponse = await axios.post(`${API_URL}/api/prices`, {
-          product_url: productUrl
-        });
-        const prices = pricesResponse.data;
-        console.log('Prices received');
-
-        // Wait 5 seconds between API calls to respect rate limits
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
-        // 2. Review Agent
-        setCurrentStep('reviews');
-        console.log('Step 2: Analyzing reviews...');
-        const reviewsResponse = await axios.post(`${API_URL}/api/reviews`, {
-          product_url: productUrl
-        });
-        const reviews = reviewsResponse.data;
-        console.log('Reviews received');
-
-        // Wait 5 seconds between API calls to respect rate limits
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
-        // 3. Specs Agent
-        setCurrentStep('specs');
-        console.log('Step 3: Extracting specifications...');
-        const specsResponse = await axios.post(`${API_URL}/api/specs`, {
-          product_url: productUrl
-        });
-        const specifications = specsResponse.data;
-        console.log('Specifications received');
+        const [pricesResponse, reviewsResponse, specsResponse] = await Promise.all([
+          axios.post(`${API_URL}/api/prices`, { product_url: productUrl })
+            .then(r => { setAgentStatus(s => ({ ...s, prices: 'done' })); return r; }),
+          axios.post(`${API_URL}/api/reviews`, { product_url: productUrl })
+            .then(r => { setAgentStatus(s => ({ ...s, reviews: 'done' })); return r; }),
+          axios.post(`${API_URL}/api/specs`, { product_url: productUrl })
+            .then(r => { setAgentStatus(s => ({ ...s, specs: 'done' })); return r; }),
+        ]);
 
         setProductData({
-          prices,
-          reviews,
-          specifications,
-          status: 'success'
+          prices: pricesResponse.data,
+          reviews: reviewsResponse.data,
+          specifications: specsResponse.data,
+          status: 'success',
         });
-        setCurrentStep('completed');
-        console.log('Analysis completed successfully');
       } catch (err: any) {
         console.error('Error during analysis:', err);
         setError((err as any).response?.data?.detail || (err as any).message || 'Failed to fetch product data');
@@ -151,49 +127,48 @@ function ProductDetailsContent() {
       { id: 'specs', label: 'Extracting Specifications', icon: Package },
     ];
 
-    const currentStepIndex = steps.findIndex(s => s.id === currentStep);
-
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="max-w-md w-full px-8">
           <div className="text-center mb-8">
             <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <h2 className="text-2xl font-bold text-gray-900">AI Research in Progress</h2>
-            <p className="text-gray-600 mt-2">Our agents are scanning multiple fashion sources...</p>
+            <p className="text-gray-600 mt-2">3 agents running in parallel...</p>
           </div>
-          
+
           <div className="space-y-4">
-            {steps.map((step, index) => {
+            {steps.map((step) => {
               const Icon = step.icon;
-              const isCompleted = index < currentStepIndex || currentStep === 'completed';
-              const isCurrent = index === currentStepIndex && currentStep !== 'completed';
-              
+              const status = agentStatus[step.id] as AgentStatus;
+              const isDone = status === 'done';
+              const isRunning = status === 'running';
+
               return (
-                <div 
-                  key={step.id} 
+                <div
+                  key={step.id}
                   className={`flex items-center p-4 rounded-xl transition-all duration-500 ${
-                    isCurrent ? 'bg-white shadow-md scale-105 border-l-4 border-blue-600' : 
-                    isCompleted ? 'bg-blue-50 opacity-80' : 'bg-gray-50 opacity-40'
+                    isDone ? 'bg-blue-50 opacity-80' :
+                    isRunning ? 'bg-white shadow-md border-l-4 border-blue-600' : 'bg-gray-50 opacity-40'
                   }`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${
-                    isCurrent ? 'bg-blue-600 text-white animate-pulse' : 
-                    isCompleted ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'
+                    isDone ? 'bg-green-100 text-green-600' :
+                    isRunning ? 'bg-blue-600 text-white animate-pulse' : 'bg-gray-200 text-gray-400'
                   }`}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <span className={`font-semibold ${
-                        isCurrent ? 'text-blue-600' : 
-                        isCompleted ? 'text-green-600' : 'text-gray-500'
+                        isDone ? 'text-green-600' :
+                        isRunning ? 'text-blue-600' : 'text-gray-500'
                       }`}>
                         {step.label}
                       </span>
-                      {isCompleted && <span className="text-green-600 text-sm font-bold">Done</span>}
-                      {isCurrent && <span className="text-blue-600 text-sm animate-pulse">Running...</span>}
+                      {isDone && <span className="text-green-600 text-sm font-bold">Done</span>}
+                      {isRunning && <span className="text-blue-600 text-sm animate-pulse">Running...</span>}
                     </div>
-                    {isCurrent && (
+                    {isRunning && (
                       <div className="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
                         <div className="h-full bg-blue-600 animate-progress"></div>
                       </div>
@@ -204,7 +179,7 @@ function ProductDetailsContent() {
             })}
           </div>
           <p className="text-center text-sm text-gray-500 mt-8">
-            This typically takes 30-60 seconds to stay within API rate limits.
+            Typically takes 30–60 seconds.
           </p>
         </div>
       </div>
