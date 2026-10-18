@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
@@ -154,20 +154,31 @@ export default function DueDiligencePage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!url.trim()) return;
+  const runResearch = useCallback(async (productUrl: string) => {
+    if (!productUrl.trim()) return;
     setLoading(true);
     setError(null);
     setReport(null);
     try {
-      const res = await axios.post(`${API_URL}/api/due-diligence`, { product_url: url }, { timeout: 300000 });
+      const res = await axios.post(`${API_URL}/api/due-diligence`, { product_url: productUrl }, { timeout: 300000 });
       setReport(res.data);
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || 'Request failed');
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const initialUrl = new URLSearchParams(window.location.search).get('url');
+    if (!initialUrl) return;
+    setUrl(initialUrl);
+    void runResearch(initialUrl);
+  }, [runResearch]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void runResearch(url);
   };
 
   const verdictBg = report?.verdict.startsWith('Worth')

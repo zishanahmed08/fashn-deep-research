@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FashnAI - Fashion Price Comparison",
-  description: "AI-powered fashion product comparison and analysis",
+  title: "FashnAI | Fashion due diligence",
+  description: "Independent product research and verification to help you make informed fashion purchases.",
 };
 
 export default function RootLayout({
