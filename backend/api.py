@@ -405,6 +405,19 @@ async def due_diligence(request: SearchRequest):
         raise HTTPException(status_code=500, detail=f"Due-diligence failed: {str(e)}")
 
 
+@app.get("/debug-agent")
+async def debug_agent():
+    """Returns raw agent content string for diagnosing container failures."""
+    from ProductSpecsAgent import extract_specifications
+    result = await asyncio.to_thread(extract_specifications, "https://example.com")
+    content = result.content
+    return {
+        "content_type": type(content).__name__,
+        "content_preview": str(content)[:500] if isinstance(content, str) else "Pydantic model OK",
+        "product_name": getattr(content, "product_name", "N/A"),
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
