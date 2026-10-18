@@ -323,6 +323,9 @@ async def get_specifications(request: SearchRequest):
         logger.info(f"Extracting specifications for: {request.product_url}")
         result = await asyncio.to_thread(extract_specifications, request.product_url)
         if isinstance(result.content, str):
+            logger.error(f"ProductSpecsAgent returned string: {result.content[:500]}")
+            raise HTTPException(status_code=500, detail=f"Agent error: {result.content[:500]}")
+        if isinstance(result.content, str):
             # Agent returned error string instead of model
             return ProductSpecification(
                 product_name="Unknown",
