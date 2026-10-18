@@ -1,94 +1,102 @@
 {
   "485da007af2a447c8a69f73e2fa10391": {
-    "product_name": "Limbara Isolierjacke für Herren | The North Face | NF0A89EG (color JK3)",
+    "product_name": "Limbarra Insulated Jacket | The North Face | NF0A89EG",
     "product_url": "https://www.thenorthface.com/de-de/p/herren-211701/limbara-isolierjacke-fur-herren-NF0A89EG?color=JK3&size=M",
     "verdict": "Skip — multiple claims contested or unsupported",
     "checked_claims": [
       {
-        "claim": "Listed at €215.00 on astermoda.com",
-        "source_url": "https://www.astermoda.com/en/product/the-north-face-jacket-limbara-insulated-the-north-face-nf0a89eg-jk31",
-        "quote": "Jacket limbara insulated The North Face — SKU: NF0A89EGJK31 — € 215.00 — Choose a size: XS S M L — ADD TO CART PROCEED WITH THE ORDER BACK TO SHOPPING",
+        "claim": "Body fabric is 74 g/m² 100% Recycled Polyester with Non-PFC DWR finish",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "Body Fabric: 74 g/m², 100% Recycled Polyester with Non-PFC Durable Water-Repellent (Non-PFC DWR) Finish",
         "confidence": 0.9,
-        "category": "price",
+        "category": "material",
+        "kind": "claim",
         "verdict": "unsupported",
-        "checker_note": "Search results are unrelated to the claim; they discuss a fintech company's regulatory listing, not a product price on astermoda.com. No independent source confirms the €215.00 price.",
+        "checker_note": "No independent source confirms the exact 74 g/m² body fabric spec; a retailer lists a lower body lining at 70 g/m² with similar material.",
+        "checker_source_url": "https://shoppennyworths.com/products/boys-freedom-insulated-jacket-nf0a88tz",
+        "checker_quote": "Fabric - Lower Body Lining :70 G/M², 100% Recycled Polyester with Non-PFC Durable Water-Repellent (Non-PFC DWR) Finish"
+      },
+      {
+        "claim": "Lining fabric is 73 g/m² 100% Recycled Polyester",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "Lining Fabric: 73 g/m², 100% Recycled Polyester",
+        "confidence": 0.9,
+        "category": "material",
+        "kind": "claim",
+        "verdict": "unsupported",
+        "checker_note": "Search results show 100% recycled polyester lining fabrics exist (e.g., 190 GSM weight), but none confirm the specific 73 g/m² weight claimed.",
         "checker_source_url": null,
         "checker_quote": null
       },
       {
-        "claim": "Listed at 249.95 € incl. VAT on kickz.com",
-        "source_url": "https://www.kickz.com/en/The-North-Face-Limbara-Insulated-Jacket-Black/p/NF0A89EG-JK3",
-        "quote": "The North Face Limbara Insulated Jacket Black — Deal — 249.95 € incl. VAT — Color BLACK — Product code: NF0A89EG-jk3 — Manufacturer Information: VF Germany Textil-Handels GmbH",
+        "claim": "Insulation is 100% Recycled Polyester cluster insulation",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "Insulation: 100% Recycled Polyester (Recycled synthetic cluster insulation – compressible warmth even when wet)",
         "confidence": 0.9,
-        "category": "price",
-        "verdict": "unsupported",
-        "checker_note": "The search results are entirely unrelated to the claim; they discuss Finnate's listing on a financial programme and do not mention kickz.com, The North Face, or any price of 249.95 €.",
-        "checker_source_url": null,
-        "checker_quote": null
-      },
-      {
-        "claim": "Listed at 156,00 € (was 260,00 €, -40%) on thenorthface.com",
-        "source_url": "https://www.thenorthface.com/de-de/p/herren-211701/limbara-isolierjacke-fur-herren-NF0A89EG?color=JK3&size=M",
-        "quote": "Limbara Isolierjacke für Herren — Anfangspreis: 260,00 € — Rabattierter Preis: 156,00 € (-40%) — Style: NF0A89EG — Material – Rumpf: 74g/m², 100% recycelter Polyester mit wasserabweisender, PFC-freier und haltbarer DWR-Beschichtung",
-        "confidence": 0.9,
-        "category": "price",
-        "verdict": "unsupported",
-        "checker_note": "Search results show a sale page from desigual.com with matching numbers (260 to 156 at 40% off) but in AUD for a different brand, not thenorthface.com. No independent source confirms the claimed price on thenorthface.com.",
-        "checker_source_url": null,
-        "checker_quote": null
-      },
-      {
-        "claim": "Listed at €215.00 on astermoda.com (alternative listing)",
-        "source_url": "https://www.astermoda.com/en/product/the-north-face-jacket-limbara-insulated-the-north-face-nf0a89eg-jk31",
-        "quote": "SKU: NF0A89EGJK31 — Jacket limbara insulated The North Face — € 215.00 — Choose a size: XS S M L — ADD TO CART PROCEED WITH THE ORDER BACK TO SHOPPING",
-        "confidence": 0.9,
-        "category": "price",
+        "category": "material",
+        "kind": "claim",
         "verdict": "verified",
-        "checker_note": "Multiple product listings on astermoda.com show a price of €215.00, confirming the claim.",
-        "checker_source_url": "https://www.astermoda.com/it/uomo/designer/polo-ralph-lauren",
-        "checker_quote": "Ralph Lauren € 215.00 S | M"
+        "checker_note": "An independent retailer's brand guide describes the insulation as 100% recycled synthetic insulation that mimics down's cluster structure, matching the claim.",
+        "checker_source_url": "https://www.odsdesignerclothing.com/pages/north-face-brand-guide",
+        "checker_quote": "100% recycled synthetic insulation that mimics down's cluster structure."
       },
       {
-        "claim": "4.2/5 stars on Amazon.de based on 26 reviews",
-        "source_url": "https://www.amazon.de/dp/B0D54RXBHW",
-        "quote": "4,2 ⭐ / 26 Bewertungen",
+        "claim": "Product uses 100% Recycled Polyester across body, lining, and insulation",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "100% Recycled Polyester across body, lining, and insulation",
         "confidence": 0.9,
-        "category": "review",
+        "category": "sustainability",
+        "kind": "claim",
         "verdict": "unsupported",
-        "checker_note": "Search results contain no independent source confirming a 4.2/5 star rating with 26 reviews on Amazon.de; only unrelated Trustpilot data and academic papers appear.",
+        "checker_note": "No independent source found confirming The North Face product uses 100% recycled polyester across all components; search results show unrelated products with only partial recycled content.",
         "checker_source_url": null,
         "checker_quote": null
       },
       {
-        "claim": "4.2/5 stars on testbericht.de aggregated from 26 Amazon reviews",
-        "source_url": "https://www.testbericht.de",
-        "quote": "4,2 ⭐ / 26 Amazon-Rezensionen aggregiert",
+        "claim": "Water repellent finish is Non-PFC DWR (PFC-free)",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "Non-PFC Durable Water-Repellent (Non-PFC DWR) Finish",
         "confidence": 0.9,
-        "category": "review",
+        "category": "sustainability",
+        "kind": "claim",
         "verdict": "unsupported",
-        "checker_note": "None of the search results mention testbericht.de or provide independent verification of a 4.2/5 star rating aggregated from 26 Amazon reviews for any The North Face product.",
+        "checker_note": "No independent source found confirming The North Face's specific PFC-free DWR claim; search results only discuss PFC-free DWR technologies generally.",
         "checker_source_url": null,
         "checker_quote": null
       },
       {
-        "claim": "Amazon reviewers note good quality, very warm, slightly large fit, no interior pockets, no down fill weight specified",
-        "source_url": "https://www.amazon.de/dp/B0D54RXBHW",
-        "quote": "„Gute Qualität, sehr warm“, „etwas groß geschnitten“, „gute Jacke für den Preis“, „keine Innenseitentaschen“, „Daunen-Füllgewicht nicht angegeben“",
-        "confidence": 0.9,
-        "category": "review",
+        "claim": "OEKO-TEX Standard 100 certification is mentioned by third parties but not on brand product page",
+        "source_url": "https://www.ubuy.mg/en/producttr/MPDW7D8VC-the-north-face-m-limbara-insulated-jacket-erkek-outdoor-montu-nf0a89egjk31-siyah",
+        "quote": "OEKO-TEX® Standard 100 mentioned in third-party search summaries for NF0A89EG; not explicitly listed on The North Face UK product page",
+        "confidence": 0.5,
+        "category": "sustainability",
+        "kind": "claim",
         "verdict": "unsupported",
-        "checker_note": "The search results contain no Amazon reviews or independent sources discussing the product's quality, warmth, fit, interior pockets, or down fill weight. Only unrelated sources (Trustpilot for a different brand, mattress reviews, dance bag review, and a Facebook video about scams) were returned.",
+        "checker_note": "Search results show third-party sites discussing OEKO-TEX Standard 100 certification generally, but none address The North Face product pages, so the claim about the brand page lacking mention cannot be verified.",
         "checker_source_url": null,
         "checker_quote": null
       },
       {
-        "claim": "YouTube review highlights huge negative: no interior pockets, hood floppy, velcro cuffs annoying, no down fill weight, relaxed fit runs large",
-        "source_url": "https://www.youtube.com/results?search_query=The+North+Face+Limbara+Insulated+Jacket+Review",
-        "quote": "„Huge negative: keine Innentaschen“, „Kapuze etwas labberig“, „Klettverschlüsse an Ärmeln nervig“, „keine Daunen-Füllgewichtsangabe\", „Relaxed Fit fällt groß aus\"",
+        "claim": "Listed at 156.00 € (discounted from 260.00 €, -40%) on thenorthface.de",
+        "source_url": "https://www.thenorthface.de/shop/de/tnfde/jacke-limbara-insulated-the-north-face-nf0a89egjk31",
+        "quote": "Rabattierter Preis: 156,00 € (-40%)",
         "confidence": 0.9,
-        "category": "review",
-        "verdict": "unsupported",
-        "checker_note": "The search results returned unrelated content (a Facebook yard sale group, doll playsets, music playlists, and an art museum page) with no product reviews or independent corroboration of the claimed negatives.",
+        "category": "price",
+        "kind": "fact",
+        "verdict": "verified",
+        "checker_note": "Directly observed on the source page; verbatim quote confirms it. Facts are not independently corroborated.",
+        "checker_source_url": null,
+        "checker_quote": null
+      },
+      {
+        "claim": "Listed at 249.95 € incl. VAT on Kickz.com",
+        "source_url": "https://www.kickz.com/en/The-North-Face-Limbara-Insulated-Jacket-Black/p/NF0A89EG-JK3",
+        "quote": "249.95 € incl. VAT",
+        "confidence": 0.9,
+        "category": "price",
+        "kind": "fact",
+        "verdict": "verified",
+        "checker_note": "Directly observed on the source page; verbatim quote confirms it. Facts are not independently corroborated.",
         "checker_source_url": null,
         "checker_quote": null
       }
@@ -107,27 +115,167 @@
       {
         "agent": "PriceAgent",
         "action": "complete",
-        "detail": "Found 4 listings, 8 cited claims"
+        "detail": "Found 6 listings, 22 cited claims"
       },
       {
         "agent": "ReviewAgent",
         "action": "complete",
-        "detail": "Rating 4.2/5 from 26 reviews, 5 cited claims"
+        "detail": "Rating 4.2/5 from 71 reviews, 7 cited claims"
       },
       {
         "agent": "SpecsAgent",
-        "action": "agent_error",
-        "detail": "returned error string: {\n  \"product_name\": \"Limbara Isolierjacke für Herren\",\n  \"brand\": \"The North Face\",\n  \"category\": \"Insulated Jacket\",\n  \"color\": \"JK3 (Colourblocking)"
+        "action": "complete",
+        "detail": "Extracted 21 cited claims (material, spec, sustainability)"
       },
       {
         "agent": "FactChecker",
         "action": "start",
-        "detail": "Verifying 8 claims in parallel, excluding brand domain: thenorthface.com"
+        "detail": "15 claims to verify independently (35 facts self-verified from source quotes), excluding brand domain: thenorthface.com"
       },
       {
         "agent": "FactChecker",
         "action": "complete",
-        "detail": "verified=1, contested=0, unsupported=7"
+        "detail": "verified=3, contested=0, unsupported=5 (claims only; facts self-verified)"
+      }
+    ]
+  },
+  "4121de8287a88ac73d2fe169f00732e9": {
+    "product_name": "Limbarra Insulated Jacket | The North Face | NF0A89EG",
+    "product_url": "https://www.thenorthface.com/de-de/p/herren-211701/limbara-isolierjacke-fur-herren-NF0A89EG?color=JK3&size=M",
+    "verdict": "Skip — multiple claims contested or unsupported",
+    "checked_claims": [
+      {
+        "claim": "Body fabric is 74 g/m² 100% Recycled Polyester with Non-PFC DWR finish",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "Body Fabric: 74 g/m², 100% Recycled Polyester with Non-PFC Durable Water-Repellent (Non-PFC DWR) Finish",
+        "confidence": 0.9,
+        "category": "material",
+        "kind": "claim",
+        "verdict": "unsupported",
+        "checker_note": "No independent source confirms the exact 74 g/m² body fabric spec; a retailer lists a lower body lining at 70 g/m² with similar material.",
+        "checker_source_url": "https://shoppennyworths.com/products/boys-freedom-insulated-jacket-nf0a88tz",
+        "checker_quote": "Fabric - Lower Body Lining :70 G/M², 100% Recycled Polyester with Non-PFC Durable Water-Repellent (Non-PFC DWR) Finish"
+      },
+      {
+        "claim": "Lining fabric is 73 g/m² 100% Recycled Polyester",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "Lining Fabric: 73 g/m², 100% Recycled Polyester",
+        "confidence": 0.9,
+        "category": "material",
+        "kind": "claim",
+        "verdict": "unsupported",
+        "checker_note": "Search results show 100% recycled polyester lining fabrics exist (e.g., 190 GSM weight), but none confirm the specific 73 g/m² weight claimed.",
+        "checker_source_url": null,
+        "checker_quote": null
+      },
+      {
+        "claim": "Insulation is 100% Recycled Polyester cluster insulation",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "Insulation: 100% Recycled Polyester (Recycled synthetic cluster insulation – compressible warmth even when wet)",
+        "confidence": 0.9,
+        "category": "material",
+        "kind": "claim",
+        "verdict": "verified",
+        "checker_note": "An independent retailer's brand guide describes the insulation as 100% recycled synthetic insulation that mimics down's cluster structure, matching the claim.",
+        "checker_source_url": "https://www.odsdesignerclothing.com/pages/north-face-brand-guide",
+        "checker_quote": "100% recycled synthetic insulation that mimics down's cluster structure."
+      },
+      {
+        "claim": "Product uses 100% Recycled Polyester across body, lining, and insulation",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "100% Recycled Polyester across body, lining, and insulation",
+        "confidence": 0.9,
+        "category": "sustainability",
+        "kind": "claim",
+        "verdict": "unsupported",
+        "checker_note": "No independent source found confirming The North Face product uses 100% recycled polyester across all components; search results show unrelated products with only partial recycled content.",
+        "checker_source_url": null,
+        "checker_quote": null
+      },
+      {
+        "claim": "Water repellent finish is Non-PFC DWR (PFC-free)",
+        "source_url": "https://www.thenorthface.com/en-gb/p/men-211701/men-s-limbara-insulated-jacket-NF0A89EG",
+        "quote": "Non-PFC Durable Water-Repellent (Non-PFC DWR) Finish",
+        "confidence": 0.9,
+        "category": "sustainability",
+        "kind": "claim",
+        "verdict": "unsupported",
+        "checker_note": "No independent source found confirming The North Face's specific PFC-free DWR claim; search results only discuss PFC-free DWR technologies generally.",
+        "checker_source_url": null,
+        "checker_quote": null
+      },
+      {
+        "claim": "OEKO-TEX Standard 100 certification is mentioned by third parties but not on brand product page",
+        "source_url": "https://www.ubuy.mg/en/producttr/MPDW7D8VC-the-north-face-m-limbara-insulated-jacket-erkek-outdoor-montu-nf0a89egjk31-siyah",
+        "quote": "OEKO-TEX® Standard 100 mentioned in third-party search summaries for NF0A89EG; not explicitly listed on The North Face UK product page",
+        "confidence": 0.5,
+        "category": "sustainability",
+        "kind": "claim",
+        "verdict": "unsupported",
+        "checker_note": "Search results show third-party sites discussing OEKO-TEX Standard 100 certification generally, but none address The North Face product pages, so the claim about the brand page lacking mention cannot be verified.",
+        "checker_source_url": null,
+        "checker_quote": null
+      },
+      {
+        "claim": "Listed at 156.00 € (discounted from 260.00 €, -40%) on thenorthface.de",
+        "source_url": "https://www.thenorthface.de/shop/de/tnfde/jacke-limbara-insulated-the-north-face-nf0a89egjk31",
+        "quote": "Rabattierter Preis: 156,00 € (-40%)",
+        "confidence": 0.9,
+        "category": "price",
+        "kind": "fact",
+        "verdict": "verified",
+        "checker_note": "Directly observed on the source page; verbatim quote confirms it. Facts are not independently corroborated.",
+        "checker_source_url": null,
+        "checker_quote": null
+      },
+      {
+        "claim": "Listed at 249.95 € incl. VAT on Kickz.com",
+        "source_url": "https://www.kickz.com/en/The-North-Face-Limbara-Insulated-Jacket-Black/p/NF0A89EG-JK3",
+        "quote": "249.95 € incl. VAT",
+        "confidence": 0.9,
+        "category": "price",
+        "kind": "fact",
+        "verdict": "verified",
+        "checker_note": "Directly observed on the source page; verbatim quote confirms it. Facts are not independently corroborated.",
+        "checker_source_url": null,
+        "checker_quote": null
+      }
+    ],
+    "trace": [
+      {
+        "agent": "Planner",
+        "action": "decompose",
+        "detail": "Research questions: price comparison, material/spec verification, review authenticity for https://www.thenorthface.com/de-de/p/herren-211701/limbara-isolierjacke-fur-herren-NF0A89EG?color=JK3&size=M"
+      },
+      {
+        "agent": "Planner",
+        "action": "dispatch",
+        "detail": "Running PriceAgent, ReviewAgent, SpecsAgent in parallel"
+      },
+      {
+        "agent": "PriceAgent",
+        "action": "complete",
+        "detail": "Found 6 listings, 22 cited claims"
+      },
+      {
+        "agent": "ReviewAgent",
+        "action": "complete",
+        "detail": "Rating 4.2/5 from 71 reviews, 7 cited claims"
+      },
+      {
+        "agent": "SpecsAgent",
+        "action": "complete",
+        "detail": "Extracted 21 cited claims (material, spec, sustainability)"
+      },
+      {
+        "agent": "FactChecker",
+        "action": "start",
+        "detail": "15 claims to verify independently (35 facts self-verified from source quotes), excluding brand domain: thenorthface.com"
+      },
+      {
+        "agent": "FactChecker",
+        "action": "complete",
+        "detail": "verified=3, contested=0, unsupported=5 (claims only; facts self-verified)"
       }
     ]
   }
