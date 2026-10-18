@@ -28,16 +28,6 @@ llm = Nebius(
     api_key=os.getenv("NEBIUS_API_KEY"),
 )
 
-db = SqliteDb()  # SQLite instance created directly
-
-agent = Agent(
-    model=llm,
-    tools=[TavilyTools(enable_search=True, enable_extract=True), Crawl4aiTools()],
-    db=db,  # SQLite instance
-    enable_user_memories=True,
-    markdown=True
-)
-
 
 class ProductListing(BaseModel):
     website_name: str = Field(
