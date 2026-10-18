@@ -6,7 +6,6 @@ from typing import List
 from agno.agent import Agent, RunOutput
 from agno.models.nebius import Nebius
 from agno.tools.tavily import TavilyTools
-from agno.tools.crawl4ai import Crawl4aiTools
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from schemas import CitedClaim
@@ -64,7 +63,6 @@ def price_agent() -> Agent:
         model=llm,
         tools=[
             TavilyTools(enable_search=True, enable_extract=True),
-            Crawl4aiTools(max_length=12000),
         ],
         tool_call_limit=15,
         description=dedent("""\
