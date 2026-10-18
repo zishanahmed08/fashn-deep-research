@@ -113,13 +113,20 @@ async def run_due_diligence(product_url: str) -> DueDiligenceReport:
         except Exception as e:
             trace.append(TraceStep(agent="SpecsAgent", action="parse_error", detail=str(e)[:200]))
 
-    # Cap at 8 items, prioritise claims (independent verification needed) over facts
+    # Cap at 8 items. Claims first (they need independent verification); reserve the
+# last 2 slots for facts so the report shows source-quoted facts too (they cost
+# no search — self-verified from the quote).
     priority_order = ["material", "sustainability", "review", "price", "spec"]
-    sorted_claims = sorted(all_claims, key=lambda c: (
-        0 if c.kind == "claim" else 1,
-        priority_order.index(c.category) if c.category in priority_order else 99,
-    ))
-    batch = sorted_claims[:8]
+    claims_sorted = sorted(
+        (c for c in all_claims if c.kind == "claim"),
+        key=lambda c: priority_order.index(c.category) if c.category in priority_order else 99,
+    )
+    facts_sorted = sorted(
+        (c for c in all_claims if c.kind == "fact"),
+        key=lambda c: priority_order.index(c.category) if c.category in priority_order else 99,
+    )
+    batch = claims_sorted[:6] + facts_sorted[:2]
+    batch = batch[:8]
 
     n_facts = sum(1 for c in all_claims if c.kind == "fact")
     n_claims = len(all_claims) - n_facts
