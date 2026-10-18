@@ -84,3 +84,4 @@ tmp/
 *.bak
 *.tmp
 .cache/
+# keep backend/cache/ committed (demo warm-up responses)

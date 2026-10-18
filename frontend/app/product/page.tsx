@@ -4,9 +4,8 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowLeft, ExternalLink, Star, TrendingUp, TrendingDown, Package, ShoppingBag } from 'lucide-react';
 import axios from 'axios';
-import { isPaymentRequired, PaymentRequiredPanel } from '../x402-payment';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fashnai-api.onrender.com';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface ProductListing {
   website_name: string;
@@ -78,7 +77,6 @@ function ProductDetailsContent() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'prices' | 'reviews' | 'specs'>('prices');
   const [currentStep, setCurrentStep] = useState<AnalysisStep>('prices');
-  const [payment, setPayment] = useState<ReturnType<typeof isPaymentRequired>>(null);
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -137,12 +135,7 @@ function ProductDetailsContent() {
         console.log('Analysis completed successfully');
       } catch (err: any) {
         console.error('Error during analysis:', err);
-        const paymentInfo = isPaymentRequired(err);
-        if (paymentInfo) {
-          setPayment(paymentInfo);
-        } else {
-          setError(err.response?.data?.detail || err.message || 'Failed to fetch product data');
-        }
+        setError((err as any).response?.data?.detail || (err as any).message || 'Failed to fetch product data');
       } finally {
         setLoading(false);
       }
@@ -150,10 +143,6 @@ function ProductDetailsContent() {
 
     fetchProductData();
   }, [searchParams]);
-
-  if (payment) {
-    return <PaymentRequiredPanel payment={payment} />;
-  }
 
   if (loading) {
     const steps = [

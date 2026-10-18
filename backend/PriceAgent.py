@@ -10,6 +10,7 @@ from agno.tools.tavily import TavilyTools
 from agno.tools.crawl4ai import Crawl4aiTools
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+from schemas import CitedClaim
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -62,6 +63,9 @@ class PriceComparisonResult(BaseModel):
         ..., description="Brief summary of the search results and price range found")
     sources_checked: List[str] = Field(
         ..., description="List of all URLs checked during the research process")
+    claims: List[CitedClaim] = Field(
+        default_factory=list,
+        description="Per-claim citations: each price or availability fact with source URL, verbatim quote, and confidence score")
 
 
 def price_agent() -> Agent:
@@ -137,6 +141,15 @@ def price_agent() -> Agent:
             - Include all URLs you actively used in the sources_checked field
             - If you cannot find the product on other websites, still return the original listing
               and explain in the search_summary why no other listings were found
+
+        6. Per-claim citations (claims field)
+            - For EVERY price or availability fact, add a CitedClaim entry:
+                * claim: one falsifiable sentence, e.g. "Listed at €179.95 on thenorthface.com"
+                * source_url: the exact URL you retrieved it from
+                * quote: verbatim text from the page (price string, availability text) ≤80 words
+                * confidence: the Tavily result score (0.0–1.0); use 0.9 for direct page crawl
+                * category: "price" or "availability"
+            - Do NOT invent quotes. Only include a CitedClaim if you actually retrieved that page.
         """),
         output_schema=PriceComparisonResult,
         db=SqliteDb(session_table="price_comparison_agent", db_file="tmp/agents.db"),

@@ -36,8 +36,7 @@ export default function Home() {
             </div>
             <nav className="hidden md:flex space-x-6">
               <a href="#" className="text-gray-600 hover:text-gray-900">Home</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">How it works</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">About</a>
+              <a href="/due-diligence" className="text-blue-600 font-semibold hover:text-blue-800">Due Diligence ↗</a>
             </nav>
           </div>
         </div>

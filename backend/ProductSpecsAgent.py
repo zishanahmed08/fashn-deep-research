@@ -10,6 +10,7 @@ from agno.tools.tavily import TavilyTools
 from agno.tools.crawl4ai import Crawl4aiTools
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+from schemas import CitedClaim
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -45,6 +46,9 @@ class ProductSpecification(BaseModel):
     fit_type: Optional[str] = Field(None, description="Fit type (e.g., Regular Fit, Slim Fit, Oversized)")
     additional_specs: Dict[str, str] = Field(default_factory=dict, description="Any additional specifications")
     sources: List[str] = Field(..., description="URLs where specifications were found")
+    claims: List[CitedClaim] = Field(
+        default_factory=list,
+        description="Per-claim citations: each material, feature, or spec fact with source URL, verbatim quote, and confidence")
 
 
 def product_specs_agent() -> Agent:
@@ -132,6 +136,15 @@ def product_specs_agent() -> Agent:
             - Cross-reference information from multiple sources when possible
             - Be specific: "100% Organic Cotton" not just "Cotton"
             - Include technical details when available
+
+        10. Per-claim citations (claims field)
+            - For EVERY material, feature, size, or spec fact, add a CitedClaim entry:
+                * claim: one falsifiable sentence, e.g. "Shell is 100% nylon per product page"
+                * source_url: the URL of the page where this spec was found
+                * quote: verbatim text from the page supporting the claim ≤80 words
+                * confidence: Tavily result score (0.0–1.0); use 0.9 for direct product page crawl
+                * category: "material", "spec", or "sustainability"
+            - Do NOT invent quotes. Only include a CitedClaim if you actually retrieved that page.
         """),
         output_schema=ProductSpecification,
         db=SqliteDb(session_table="product_specs_agent", db_file="tmp/agents.db"),

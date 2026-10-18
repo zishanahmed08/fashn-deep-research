@@ -10,6 +10,7 @@ from agno.tools.tavily import TavilyTools
 from agno.tools.crawl4ai import Crawl4aiTools
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+from schemas import CitedClaim
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -44,6 +45,9 @@ class ReviewAnalysis(BaseModel):
     summary: str = Field(..., description="2-3 sentence summary of overall customer feedback")
     verified_purchase_percentage: int = Field(default=0, description="Percentage of verified purchase reviews")
     sources_analyzed: List[str] = Field(..., description="URLs of review sources analyzed")
+    claims: List[CitedClaim] = Field(
+        default_factory=list,
+        description="Per-claim citations: each rating, sentiment fact, or key review finding with source URL, verbatim quote, and confidence")
 
 
 def review_analyzer_agent() -> Agent:
@@ -116,6 +120,15 @@ def review_analyzer_agent() -> Agent:
             - Prioritize verified purchase reviews
             - Look for specific details rather than generic praise/complaints
             - Balance positive and negative feedback objectively
+
+        7. Per-claim citations (claims field)
+            - For EVERY rating, key pro, key con, or theme, add a CitedClaim entry:
+                * claim: one falsifiable sentence, e.g. "4.3/5 stars on Trustpilot (127 reviews)"
+                * source_url: the URL of the review source
+                * quote: verbatim text from the page supporting the claim ≤80 words
+                * confidence: Tavily result score (0.0–1.0)
+                * category: "review"
+            - Do NOT invent quotes. Only include a CitedClaim if you actually retrieved that page.
         """),
         output_schema=ReviewAnalysis,
         db=SqliteDb(session_table="review_analyzer_agent", db_file="tmp/agents.db"),

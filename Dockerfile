@@ -1,33 +1,27 @@
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv for faster package management
 RUN pip install uv
 
-# Copy dependency files
-COPY pyproject.toml ./
-COPY requirements.txt ./
-
-# Install dependencies
+COPY pyproject.toml requirements.txt ./
 RUN uv pip install --system -r requirements.txt
 
-# Install Playwright for web scraping
-RUN uv pip install --system playwright
-RUN playwright install --with-deps
+# Playwright chromium for crawl4ai page extraction
+RUN playwright install --with-deps chromium
 
-# Copy application code
-COPY ./backend ./backend/
+COPY backend/ ./backend/
 
-# Expose port (Render uses PORT env var, default to 8000)
-EXPOSE ${PORT:-8000}
+# SQLite dirs used by agno agents
+RUN mkdir -p backend/tmp tmp
 
-# Run application from backend directory
+EXPOSE 8000
+
 WORKDIR /app/backend
-CMD ["sh", "-c", "uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -11,6 +11,13 @@ from PriceAgent import compare_prices, PriceComparisonResult
 from ReviewAnalyzerAgent import analyze_reviews, ReviewAnalysis
 from ProductSpecsAgent import extract_specifications, ProductSpecification
 from VirtualTryOnAgent import virtual_tryon, VirtualTryOnResult
+from DiligenceOrchestrator import run_due_diligence
+from schemas import DueDiligenceReport
+import json, hashlib
+from pathlib import Path
+
+_CACHE_FILE = Path(__file__).parent / "cache" / "demo_responses.json"
+_response_cache: dict = json.loads(_CACHE_FILE.read_text()) if _CACHE_FILE.exists() else {}
 from x402_config import build_routes_and_server, price_for
 
 logger = logging.getLogger(__name__)
@@ -33,17 +40,18 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# x402: agents pay USDC per request (402 -> pay -> retry).
-# Added BEFORE CORSMiddleware so CORS stays outermost and 402 responses
-# still carry CORS headers for browser clients.
-try:
-    from x402.http.middleware.fastapi import PaymentMiddlewareASGI
-    _routes, _server = build_routes_and_server()
-    app.add_middleware(PaymentMiddlewareASGI, routes=_routes, server=_server,
-                       paywall_config={"appName": "FashnAI"})
-    logger.info("x402 payments enabled (USDC via facilitator)")
-except RuntimeError as e:
-    logger.warning(f"x402 payments disabled: {e}")
+# x402: set X402_ENABLED=true to activate pay-per-request USDC middleware.
+if os.getenv("X402_ENABLED", "false").lower() == "true":
+    try:
+        from x402.http.middleware.fastapi import PaymentMiddlewareASGI
+        _routes, _server = build_routes_and_server()
+        app.add_middleware(PaymentMiddlewareASGI, routes=_routes, server=_server,
+                           paywall_config={"appName": "FashnAI"})
+        logger.info("x402 payments enabled (USDC via facilitator)")
+    except RuntimeError as e:
+        logger.warning(f"x402 payments disabled: {e}")
+else:
+    logger.info("x402 payments disabled (set X402_ENABLED=true to enable)")
 
 # Get frontend URL from environment or use localhost for development
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
@@ -368,6 +376,27 @@ async def virtual_tryon_endpoint(request: VirtualTryOnRequest):
     except Exception as e:
         logger.error(f"Error in virtual try-on: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Virtual try-on failed: {str(e)}")
+
+
+@app.post("/api/due-diligence", response_model=DueDiligenceReport)
+async def due_diligence(request: SearchRequest):
+    """
+    Product due-diligence: runs three research agents in parallel, then a fact-checker
+    that independently verifies every claim. Returns per-claim verdicts with source URLs
+    and quotes, plus a full research trace.
+    Cached responses (backend/cache/demo_responses.json) are returned instantly.
+    """
+    cache_key = hashlib.md5(request.product_url.strip().encode()).hexdigest()
+    if cache_key in _response_cache:
+        logger.info(f"Cache hit for: {request.product_url}")
+        return DueDiligenceReport.model_validate(_response_cache[cache_key])
+    try:
+        logger.info(f"Starting due-diligence for: {request.product_url}")
+        report = await run_due_diligence(request.product_url)
+        return report
+    except Exception as e:
+        logger.error(f"Due-diligence failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Due-diligence failed: {str(e)}")
 
 
 if __name__ == "__main__":
