@@ -5,7 +5,7 @@ AI-powered fashion product due-diligence system using a multi-agent architecture
 ## Live Demo
 
 - **Frontend**: https://fashn-deep-research.vercel.app/
-- **Backend API**: https://port8000-pt7m5w845bntrd3.tunnel.applications.eu-west2.nebius.cloud
+- **Backend API**: https://port8000-zq4qjnhgksz8t94.tunnel.applications.eu-west2.nebius.cloud
 
 ## Features
 
