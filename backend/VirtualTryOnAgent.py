@@ -6,7 +6,6 @@ from textwrap import dedent
 from typing import Optional
 from agno.agent import Agent, RunOutput
 from agno.models.nebius import Nebius
-from agno.db.sqlite import SqliteDb
 from agno.media import Image
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
@@ -126,7 +125,6 @@ def virtual_tryon_agent() -> Agent:
             - Include honest warnings about potential issues
         """),
         output_schema=VirtualTryOnResult,
-        db=SqliteDb(session_table="virtual_tryon_agent", db_file="tmp/agents.db"),
         add_datetime_to_context=True,
         use_json_mode=True,
     )

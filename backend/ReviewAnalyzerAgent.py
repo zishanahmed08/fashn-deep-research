@@ -5,7 +5,6 @@ from textwrap import dedent
 from typing import List, Dict
 from agno.agent import Agent, RunOutput
 from agno.models.nebius import Nebius
-from agno.db.sqlite import SqliteDb
 from agno.tools.tavily import TavilyTools
 from agno.tools.crawl4ai import Crawl4aiTools
 from dotenv import load_dotenv
@@ -24,7 +23,7 @@ load_dotenv()
 
 # Use Nebius API for all agents
 llm = Nebius(
-    id='nvidia/nemotron-3-super-120b-a12b',
+    id='nvidia/Nemotron-3-Ultra-550b-a55b',
     api_key=os.getenv("NEBIUS_API_KEY"),
     max_tokens=8192,
 )
@@ -132,7 +131,6 @@ def review_analyzer_agent() -> Agent:
             - Do NOT invent quotes. Only include a CitedClaim if you actually retrieved that page.
         """),
         output_schema=ReviewAnalysis,
-        db=SqliteDb(session_table="review_analyzer_agent", db_file="tmp/agents.db"),
         add_datetime_to_context=True,
         use_json_mode=True,
     )

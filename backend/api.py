@@ -128,7 +128,7 @@ def health_check():
     return {
         "status": "healthy",
         "service": "FashnAI API",
-        "model": "nvidia/nemotron-3-super-120b-a12b (Nebius Token Factory)",
+        "model": "nvidia/Nemotron-3-Ultra-550b-a55b (Nebius Token Factory)",
         "payments": "x402 USDC",
         "env_check": {
             "NEBIUS_API_KEY": f"{nebius_key[:8]}..." if nebius_key else "NOT SET",
@@ -322,9 +322,6 @@ async def get_specifications(request: SearchRequest):
     try:
         logger.info(f"Extracting specifications for: {request.product_url}")
         result = await asyncio.to_thread(extract_specifications, request.product_url)
-        if isinstance(result.content, str):
-            logger.error(f"ProductSpecsAgent returned string: {result.content[:500]}")
-            raise HTTPException(status_code=500, detail=f"Agent error: {result.content[:500]}")
         if isinstance(result.content, str):
             # Agent returned error string instead of model
             return ProductSpecification(

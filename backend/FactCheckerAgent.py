@@ -5,7 +5,6 @@ from textwrap import dedent
 from urllib.parse import urlparse
 
 from agno.agent import Agent
-from agno.db.sqlite import SqliteDb
 from agno.models.nebius import Nebius
 from agno.tools.tavily import TavilyTools
 from dotenv import load_dotenv
@@ -22,7 +21,7 @@ logger.addHandler(handler)
 load_dotenv()
 
 llm = Nebius(
-    id="nvidia/nemotron-3-super-120b-a12b",  # confirmed: tool calling + JSON output
+    id="nvidia/Nemotron-3-Ultra-550b-a55b",  # confirmed: tool calling + JSON output
     api_key=os.getenv("NEBIUS_API_KEY"),
     max_tokens=8192,
 )
@@ -66,7 +65,6 @@ def fact_checker_agent() -> Agent:
         description="Verifies product claims against independent sources using Tavily search.",
         instructions=[SYSTEM_PROMPT],
         output_schema=FactCheckBatch,
-        db=SqliteDb(session_table="fact_checker_agent", db_file="tmp/agents.db"),
         add_datetime_to_context=True,
         use_json_mode=True,
     )
