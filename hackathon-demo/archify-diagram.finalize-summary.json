@@ -1,0 +1,368 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\safic\\Documents\\Fashnai\\fashn-deep-research\\.archify\\architecture-fashnai-duediligence-20261018-131800\\candidate.json",
+    "sha256": "c6cfaa3035b843c5f5ac0d62613c12d18f127c23082374723a967efdf67ae420",
+    "bytes": 6490
+  },
+  "artifact": {
+    "path": "C:\\Users\\safic\\Documents\\Fashnai\\fashn-deep-research\\hackathon-demo\\archify-diagram.html",
+    "sha256": "7fa00147db288af934b4127de03d1d924c05fb5564aa2fe49006ca84acf761ca",
+    "bytes": 839722
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\safic\\Documents\\Fashnai\\fashn-deep-research\\hackathon-demo\\archify-diagram.finalize.json",
+    "summaryReceipt": "C:\\Users\\safic\\Documents\\Fashnai\\fashn-deep-research\\hackathon-demo\\archify-diagram.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\safic\\Documents\\Fashnai\\fashn-deep-research\\hackathon-demo\\archify-diagram.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.1.0",
+    "availableVersion": "3.1.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-18T11:28:20.118Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 17282,
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "resolvedCrossovers": 10,
+      "routesOverSuggestedBends": 6,
+      "routesOverSuggestedStretch": 1
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [
+        {
+          "left": {
+            "id": "orchestrator-price",
+            "from": "orchestrator",
+            "to": "priceAgent",
+            "label": "parallel dispatch",
+            "collectionIndex": 3,
+            "artifactIndex": 4
+          },
+          "right": {
+            "id": "factchecker-api",
+            "from": "factChecker",
+            "to": "api",
+            "label": "verdict + checked claims",
+            "collectionIndex": 15,
+            "artifactIndex": 16
+          },
+          "point": [
+            725,
+            209.50000000000003
+          ]
+        },
+        {
+          "left": {
+            "id": "review-nebius",
+            "from": "reviewAgent",
+            "to": "nebius",
+            "label": "inference",
+            "collectionIndex": 7,
+            "artifactIndex": 8
+          },
+          "right": {
+            "id": "price-retailers",
+            "from": "priceAgent",
+            "to": "retailers",
+            "label": "search + crawl",
+            "collectionIndex": 9,
+            "artifactIndex": 10
+          },
+          "point": [
+            1054,
+            150
+          ]
+        },
+        {
+          "left": {
+            "id": "review-nebius",
+            "from": "reviewAgent",
+            "to": "nebius",
+            "label": "inference",
+            "collectionIndex": 7,
+            "artifactIndex": 8
+          },
+          "right": {
+            "id": "factchecker-api",
+            "from": "factChecker",
+            "to": "api",
+            "label": "verdict + checked claims",
+            "collectionIndex": 15,
+            "artifactIndex": 16
+          },
+          "point": [
+            1054,
+            209.5
+          ]
+        },
+        {
+          "left": {
+            "id": "specs-nebius",
+            "from": "specsAgent",
+            "to": "nebius",
+            "label": "inference",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "right": {
+            "id": "price-retailers",
+            "from": "priceAgent",
+            "to": "retailers",
+            "label": "search + crawl",
+            "collectionIndex": 9,
+            "artifactIndex": 10
+          },
+          "point": [
+            1064,
+            150
+          ]
+        },
+        {
+          "left": {
+            "id": "specs-nebius",
+            "from": "specsAgent",
+            "to": "nebius",
+            "label": "inference",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "right": {
+            "id": "review-retailers",
+            "from": "reviewAgent",
+            "to": "retailers",
+            "label": "search + crawl",
+            "collectionIndex": 10,
+            "artifactIndex": 11
+          },
+          "point": [
+            1064,
+            304
+          ]
+        },
+        {
+          "left": {
+            "id": "specs-nebius",
+            "from": "specsAgent",
+            "to": "nebius",
+            "label": "inference",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "right": {
+            "id": "orchestrator-factchecker",
+            "from": "orchestrator",
+            "to": "factChecker",
+            "label": "cited claims",
+            "collectionIndex": 12,
+            "artifactIndex": 13
+          },
+          "point": [
+            1064,
+            344
+          ]
+        },
+        {
+          "left": {
+            "id": "specs-nebius",
+            "from": "specsAgent",
+            "to": "nebius",
+            "label": "inference",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "right": {
+            "id": "factchecker-api",
+            "from": "factChecker",
+            "to": "api",
+            "label": "verdict + checked claims",
+            "collectionIndex": 15,
+            "artifactIndex": 16
+          },
+          "point": [
+            1064,
+            209.50000000000003
+          ]
+        },
+        {
+          "left": {
+            "id": "price-retailers",
+            "from": "priceAgent",
+            "to": "retailers",
+            "label": "search + crawl",
+            "collectionIndex": 9,
+            "artifactIndex": 10
+          },
+          "right": {
+            "id": "orchestrator-factchecker",
+            "from": "orchestrator",
+            "to": "factChecker",
+            "label": "cited claims",
+            "collectionIndex": 12,
+            "artifactIndex": 13
+          },
+          "point": [
+            1180,
+            344
+          ]
+        }
+      ],
+      "detours": [
+        {
+          "relationship": {
+            "id": "user-frontend",
+            "from": "user",
+            "to": "frontend",
+            "label": "paste product URL",
+            "collectionIndex": 0,
+            "artifactIndex": 1
+          },
+          "bends": 3,
+          "stretch": 1.369
+        },
+        {
+          "relationship": {
+            "id": "frontend-api",
+            "from": "frontend",
+            "to": "api",
+            "label": "POST /api/due-diligence",
+            "collectionIndex": 1,
+            "artifactIndex": 2
+          },
+          "bends": 3,
+          "stretch": 1.282
+        },
+        {
+          "relationship": {
+            "id": "orchestrator-review",
+            "from": "orchestrator",
+            "to": "reviewAgent",
+            "label": "parallel dispatch",
+            "collectionIndex": 4,
+            "artifactIndex": 5
+          },
+          "bends": 3,
+          "stretch": 1.298
+        },
+        {
+          "relationship": {
+            "id": "review-nebius",
+            "from": "reviewAgent",
+            "to": "nebius",
+            "label": "inference",
+            "collectionIndex": 7,
+            "artifactIndex": 8
+          },
+          "bends": 3,
+          "stretch": 1.174,
+          "directCorridorBlockers": [
+            {
+              "id": "priceAgent",
+              "label": "PriceAgent",
+              "box": [
+                870,
+                120,
+                160,
+                60
+              ]
+            }
+          ]
+        },
+        {
+          "relationship": {
+            "id": "orchestrator-factchecker",
+            "from": "orchestrator",
+            "to": "factChecker",
+            "label": "cited claims",
+            "collectionIndex": 12,
+            "artifactIndex": 13
+          },
+          "bends": 3,
+          "stretch": 1.075,
+          "directCorridorBlockers": [
+            {
+              "id": "reviewAgent",
+              "label": "ReviewAnalyzerAgent",
+              "box": [
+                870,
+                260,
+                160,
+                60
+              ]
+            }
+          ]
+        },
+        {
+          "relationship": {
+            "id": "factchecker-api",
+            "from": "factChecker",
+            "to": "api",
+            "label": "verdict + checked claims",
+            "collectionIndex": 15,
+            "artifactIndex": 16
+          },
+          "bends": 4,
+          "stretch": 1.21,
+          "directCorridorBlockers": [
+            {
+              "id": "orchestrator",
+              "label": "DiligenceOrchestrator",
+              "box": [
+                640,
+                260,
+                170,
+                60
+              ]
+            },
+            {
+              "id": "reviewAgent",
+              "label": "ReviewAnalyzerAgent",
+              "box": [
+                870,
+                260,
+                160,
+                60
+              ]
+            }
+          ]
+        }
+      ],
+      "truncated": true
+    },
+    "hints": [
+      "orchestrator has 4 relationships facing its right side, which fits 3 ports: make that side at least 74px, or move some of those neighbours so they face another side of orchestrator.",
+      "orchestrator → priceAgent crosses factChecker → api: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "reviewAgent → nebius crosses priceAgent → retailers: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "reviewAgent → nebius crosses factChecker → api: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "specsAgent → nebius crosses priceAgent → retailers: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "specsAgent → nebius crosses reviewAgent → retailers: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "specsAgent → nebius crosses orchestrator → factChecker: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "specsAgent → nebius crosses factChecker → api: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

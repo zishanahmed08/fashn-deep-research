@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "7833333b-fbb4-4fba-a049-365576b19de6",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\safic\\Documents\\Fashnai\\fashn-deep-research\\.archify\\architecture-fashnai-duediligence-20261018-131800\\candidate.json",
+  "output": "C:\\Users\\safic\\Documents\\Fashnai\\fashn-deep-research\\hackathon-demo\\archify-diagram.html",
+  "specification": {
+    "sha256": "c6cfaa3035b843c5f5ac0d62613c12d18f127c23082374723a967efdf67ae420",
+    "bytes": 6490
+  },
+  "artifact": {
+    "sha256": "7fa00147db288af934b4127de03d1d924c05fb5564aa2fe49006ca84acf761ca",
+    "bytes": 839722
+  }
+}
