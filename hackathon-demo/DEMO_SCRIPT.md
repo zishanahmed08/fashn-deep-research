@@ -87,7 +87,7 @@ github.com/zishanahmed08/fashn-deep-research
 
 ## Recording checklist before you hit record
 
-- [ ] Live backend healthy: `curl https://port8000-zq4qjnhgksz8t94.tunnel.applications.eu-west2.nebius.cloud/health` returns `healthy` with `NEBIUS_API_KEY len=236`
+- [ ] Live backend healthy: `curl https://port8000-zq4qjnhgksz8t94.tunnel.applications.eu-west2.nebius.cloud/health` returns `"status": "healthy"`
 - [ ] Rehearse the exact product URL once and note its runtime — the 0:12–1:20 diagram segment must cover it
 - [ ] Confirm the chosen URL produces **at least one CONTESTED or UNSUPPORTED claim** — all-verified is a weaker demo (the North Face Limbara URL currently yields 2 contested)
 - [ ] Confirm the URL is **not** in `backend/cache/demo_responses.json` — a cache hit returns instantly and breaks the architecture segment

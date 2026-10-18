@@ -123,17 +123,11 @@ def root():
 
 @app.get("/health")
 def health_check():
-    nebius_key = os.getenv("NEBIUS_API_KEY", "")
-    tavily_key = os.getenv("TAVILY_API_KEY", "")
     return {
         "status": "healthy",
         "service": "FashnAI API",
         "model": "nvidia/Nemotron-3-Ultra-550b-a55b (Nebius Token Factory)",
         "payments": "x402 USDC",
-        "env_check": {
-            "NEBIUS_API_KEY": f"len={len(nebius_key)} prefix={nebius_key[:12]!r}" if nebius_key else "NOT SET",
-            "TAVILY_API_KEY": f"len={len(tavily_key)} prefix={tavily_key[:10]!r}" if tavily_key else "NOT SET",
-        }
     }
 
 
@@ -403,19 +397,6 @@ async def due_diligence(request: SearchRequest):
     except Exception as e:
         logger.error(f"Due-diligence failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Due-diligence failed: {str(e)}")
-
-
-@app.get("/debug-agent")
-async def debug_agent():
-    """Returns raw agent content string for diagnosing container failures."""
-    from ProductSpecsAgent import extract_specifications
-    result = await asyncio.to_thread(extract_specifications, "https://en.zalando.de/nike-sportswear-t-shirt-basic-black-ni122o0a6-q11.html")
-    content = result.content
-    return {
-        "content_type": type(content).__name__,
-        "content_preview": str(content)[:500] if isinstance(content, str) else "Pydantic model OK",
-        "product_name": getattr(content, "product_name", "N/A"),
-    }
 
 
 if __name__ == "__main__":
