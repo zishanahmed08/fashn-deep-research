@@ -72,6 +72,7 @@ type AgentStatus = 'running' | 'done' | 'idle';
 function ProductDetailsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [inputUrl, setInputUrl] = useState('');
   const [productData, setProductData] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,7 +86,6 @@ function ProductDetailsContent() {
       try {
         const productUrl = searchParams.get('url');
         if (!productUrl) {
-          setError('No product URL provided');
           setLoading(false);
           return;
         }
@@ -119,6 +119,46 @@ function ProductDetailsContent() {
 
     fetchProductData();
   }, [searchParams]);
+
+  if (!searchParams.get('url')) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
+        <main className="w-full max-w-2xl">
+          <button onClick={() => router.push('/')} className="mb-8 text-sm text-gray-500 hover:text-gray-900">
+            ← FashnAI
+          </button>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">Product comparison</h1>
+          <p className="text-gray-600 mb-8">
+            Compare prices, customer reviews, and product specifications across retailers.
+          </p>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              const productUrl = inputUrl.trim();
+              if (productUrl) router.push(`/product?url=${encodeURIComponent(productUrl)}`);
+            }}
+            className="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              type="url"
+              required
+              value={inputUrl}
+              onChange={(event) => setInputUrl(event.target.value)}
+              placeholder="Paste a product URL..."
+              className="min-w-0 flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="submit"
+              disabled={!inputUrl.trim()}
+              className="rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+            >
+              Compare product
+            </button>
+          </form>
+        </main>
+      </div>
+    );
+  }
 
   if (loading) {
     const steps = [
