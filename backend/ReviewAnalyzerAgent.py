@@ -42,123 +42,132 @@ class ReviewAnalysis(BaseModel):
         description="Per-claim citations: each rating, sentiment fact, or key review finding with source URL, verbatim quote, and confidence")
 
 
-def review_analyzer_agent() -> Agent:
+# Two-stage pipeline: Nemotron on Nebius refuses to call tools when a
+# response_format is set, so research runs schema-free and a second,
+# tool-free call produces the schema-enforced JSON.
+def review_research_agent() -> Agent:
     llm = Nebius(
         id='nvidia/Nemotron-3-Ultra-550b-a55b',
         api_key=os.getenv("NEBIUS_API_KEY"),
         max_tokens=8192,
     )
-    agent = Agent(
-        name="Fashion Review Analyzer Agent",
+    return Agent(
+        name="Fashion Review Research Agent",
         model=llm,
-        tools=[
-            TavilyTools(enable_search=True, enable_extract=True),
-        ],
+        tools=[TavilyTools(enable_search=True, enable_extract=True)],
         tool_call_limit=15,
         description=dedent("""\
-        You are an intelligent review analysis agent specialized in fashion products. 
-        Your job is to find, analyze, and summarize customer reviews for fashion items 
-        (clothing, shoes, accessories) from multiple sources to provide comprehensive 
-        insights about product quality, fit, and customer satisfaction.
+        You are a fashion review research agent. You find customer reviews for a product
+        across multiple sources and write structured research notes.
+        A separate agent formats your notes into the final JSON report.
         """),
         instructions=dedent("""\
-        You will receive a product URL or product name. Your task is to:
-        
-        1. Review Discovery Phase
-            - Crawl the provided product URL to find customer reviews
-            - Search for additional review sources using web search:
-                * Product review sites
-                * Fashion forums and communities
-                * Social media mentions
-                * Retailer websites with the same product
-            - Collect at least 20-50 reviews if available
-        
-        2. Review Analysis Phase
-            - Analyze sentiment of each review (positive/negative/neutral)
-            - Calculate overall sentiment distribution
-            - Identify common pros mentioned across reviews:
-                * Quality aspects (material, construction, durability)
-                * Fit and sizing (true to size, runs small/large)
-                * Comfort and wearability
-                * Style and appearance
-                * Value for money
-            - Identify common cons mentioned across reviews:
-                * Quality issues
-                * Sizing problems
-                * Comfort concerns
-                * Durability issues
-                * Value concerns
-        
-        3. Theme Extraction
-            - Identify recurring themes across reviews:
-                * "Great quality but runs small"
-                * "Comfortable for all-day wear"
-                * "Color differs from photos"
-                * "Worth the price"
-            - Group similar feedback together
-        
-        4. Rating Calculation
-            - Calculate overall rating from all reviews
-            - Note the total number of reviews analyzed
-            - Identify percentage of verified purchases
-        
-        5. Output Requirements
-            - You MUST respond strictly in the JSON schema defined by the ReviewAnalysis model
-            - Provide 3-5 specific pros (not generic statements)
-            - Provide 3-5 specific cons (not generic statements)
-            - Include common themes that appear in multiple reviews
-            - Write a concise 2-3 sentence summary
-            - List all review sources (URLs) you analyzed
-            - If insufficient reviews found, note this in the summary
-        
-        6. Quality Guidelines
-            - Focus on substantive reviews (ignore spam or very short reviews)
-            - Prioritize verified purchase reviews
-            - Look for specific details rather than generic praise/complaints
-            - Balance positive and negative feedback objectively
+        You will receive a product URL or product name. Research it:
+
+        1. Review discovery
+            - Crawl the provided product URL with extract_url_content to find on-page reviews.
+            - Search for additional review sources with web_search_using_tavily:
+              review sites, fashion forums, retailer listings of the same product.
+            - Collect as many substantive reviews as available.
+
+        2. Analysis
+            - For each source, note the rating shown and roughly how many reviews.
+            - Identify recurring pros: quality, fit/sizing, comfort, style, value.
+            - Identify recurring cons: quality issues, sizing problems, durability, value.
+            - Note common themes that appear across multiple reviews.
+            - Note verified-purchase indicators if visible.
+
+        3. Final answer — plain structured notes (NOT JSON). Format:
+
+            PRODUCT: <name> | <product URL>
+            SOURCE: <url> | rating shown: <x.x/5 or n/a> | approx reviews: <n or unknown> | verified purchase info | <verbatim quote ≤80 words>
+            (one SOURCE line per review source you actually visited)
+            PROS: <pro 1>; <pro 2>; ... (each backed by quotes above)
+            CONS: <con 1>; <con 2>; ...
+            THEMES: <theme 1>; <theme 2>; ...
+            SUMMARY: <2-3 sentences; state explicitly if insufficient reviews were found>
+
+        Rules:
+            - Only report ratings and reviews you actually saw on a page you visited.
+            - Every SOURCE line MUST contain a verbatim quote from that page.
+            - Do not invent ratings, counts, or quotes. If a source has no reviews, say so.
+            - If you find no review data at all, write exactly that in SUMMARY.
+        """),
+        add_datetime_to_context=True,
+    )
+
+
+def review_synthesis_agent() -> Agent:
+    llm = Nebius(
+        id='nvidia/Nemotron-3-Ultra-550b-a55b',
+        api_key=os.getenv("NEBIUS_API_KEY"),
+        max_tokens=16384,
+    )
+    return Agent(
+        name="Fashion Review Synthesis Agent",
+        model=llm,
+        tools=[],
+        description="Formats review research notes into the final JSON report.",
+        instructions=dedent("""\
+        Convert the researcher's notes into a ReviewAnalysis JSON.
+
+        - Do NOT invent data. Use only what appears in the notes.
+        - overall_rating / total_reviews: only from ratings actually shown in SOURCE lines.
+          If the notes contain no ratings, use 0.0 and 0.
+        - pros / cons / common_themes: from the PROS, CONS, THEMES note lines.
+        - sources_analyzed: the URLs from every SOURCE line.
+        - For every rating or key finding, add a CitedClaim:
+          claim: one falsifiable sentence, e.g. "4.3/5 stars on Trustpilot (127 reviews)"
+          source_url: that source's URL
+          quote: the verbatim quote from the notes (≤80 words)
+          confidence: 0.9 for direct crawls
+          category: "review"
+        - summary: rewrite the SUMMARY from the notes, including any explicit
+          "insufficient reviews" statement.
 
         CRITICAL OUTPUT FORMAT:
-            - Your final output MUST be a raw JSON object matching the ReviewAnalysis schema exactly.
-            - Use "overall_rating", "total_reviews" etc. as TOP-LEVEL keys.
-            - Do NOT wrap your output in {"response": ...} or any container object.
-
-        7. Per-claim citations (claims field)
-            - For EVERY rating, key pro, key con, or theme, add a CitedClaim entry:
-                * claim: one falsifiable sentence, e.g. "4.3/5 stars on Trustpilot (127 reviews)"
-                * source_url: the URL of the review source
-                * quote: verbatim text from the page supporting the claim ≤80 words
-                * confidence: Tavily result score (0.0–1.0)
-                * category: "review"
-            - Do NOT invent quotes. Only include a CitedClaim if you actually retrieved that page.
+        Your final output MUST be a raw JSON object matching the ReviewAnalysis schema
+        exactly, with "overall_rating", "total_reviews", etc. as top-level keys.
+        Do NOT wrap it in {"response": ...} or any container.
         """),
         output_schema=ReviewAnalysis,
-        add_datetime_to_context=True,
+        add_datetime_to_context=False,
         use_json_mode=True,
     )
-    return agent
 
 
 def analyze_reviews(product_url: str, max_retries: int = 3) -> RunOutput:
-    payload = dedent(f"""
+    research_payload = dedent(f"""
         product_url: {product_url}
-        
-        Please analyze customer reviews for this fashion product from multiple sources.
+
+        Research customer reviews for this fashion product from multiple sources.
     """)
 
-    agent = review_analyzer_agent()
+    research = review_research_agent().run(
+        input=research_payload, session_id=str(uuid.uuid4()))
+    notes = research.content if isinstance(research.content, str) else str(research.content)
 
+    synth_payload = dedent(f"""
+        product_url: {product_url}
+
+        RESEARCHER NOTES:
+        {notes}
+    """)
+
+    agent = review_synthesis_agent()
+    response = None
     for attempt in range(1, max_retries + 1):
-        response = agent.run(input=payload, session_id=str(uuid.uuid4()))
+        response = agent.run(input=synth_payload, session_id=str(uuid.uuid4()))
         try:
             _ = ReviewAnalysis.model_validate(response.content)
             return response
         except Exception as e:
             if attempt < max_retries:
-                logger.error(f"Attempt {attempt} failed: {e}. Retrying...")
+                logger.error(f"Synthesis attempt {attempt} failed: {e}. Retrying...")
                 continue
-            else:
-                logger.error(f"All {max_retries} attempts failed. Returning last response.")
-                return response
+            logger.error(f"All {max_retries} synthesis attempts failed.")
+            return response
+    return response
 
 
 if __name__ == "__main__":

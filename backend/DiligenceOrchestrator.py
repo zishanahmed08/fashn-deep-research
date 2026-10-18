@@ -59,6 +59,8 @@ async def run_due_diligence(product_url: str) -> DueDiligenceReport:
     # Price
     if isinstance(results[0], Exception):
         trace.append(TraceStep(agent="PriceAgent", action="error", detail=str(results[0])[:200]))
+    elif isinstance(results[0].content, str):
+        trace.append(TraceStep(agent="PriceAgent", action="agent_error", detail=f"returned error string: {results[0].content[:150]}"))
     else:
         try:
             price_data: PriceComparisonResult = results[0].content
@@ -75,6 +77,8 @@ async def run_due_diligence(product_url: str) -> DueDiligenceReport:
     # Reviews
     if isinstance(results[1], Exception):
         trace.append(TraceStep(agent="ReviewAgent", action="error", detail=str(results[1])[:200]))
+    elif isinstance(results[1].content, str):
+        trace.append(TraceStep(agent="ReviewAgent", action="agent_error", detail=f"returned error string: {results[1].content[:150]}"))
     else:
         try:
             review_data: ReviewAnalysis = results[1].content
@@ -90,6 +94,8 @@ async def run_due_diligence(product_url: str) -> DueDiligenceReport:
     # Specs
     if isinstance(results[2], Exception):
         trace.append(TraceStep(agent="SpecsAgent", action="error", detail=str(results[2])[:200]))
+    elif isinstance(results[2].content, str):
+        trace.append(TraceStep(agent="SpecsAgent", action="agent_error", detail=f"returned error string: {results[2].content[:150]}"))
     else:
         try:
             specs_data: ProductSpecification = results[2].content

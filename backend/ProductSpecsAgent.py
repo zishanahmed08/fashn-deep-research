@@ -43,139 +43,144 @@ class ProductSpecification(BaseModel):
         description="Per-claim citations: each material, feature, or spec fact with source URL, verbatim quote, and confidence")
 
 
-def product_specs_agent() -> Agent:
+# Two-stage pipeline: Nemotron on Nebius refuses to call tools when a
+# response_format is set, so research runs schema-free and a second,
+# tool-free call produces the schema-enforced JSON.
+def specs_research_agent() -> Agent:
     llm = Nebius(
         id='nvidia/Nemotron-3-Ultra-550b-a55b',
         api_key=os.getenv("NEBIUS_API_KEY"),
         max_tokens=8192,
     )
-    agent = Agent(
-        name="Fashion Product Specifications Agent",
+    return Agent(
+        name="Fashion Product Specs Research Agent",
         model=llm,
-        tools=[
-            TavilyTools(enable_search=True, enable_extract=True),
-        ],
+        tools=[TavilyTools(enable_search=True, enable_extract=True)],
         tool_call_limit=15,
         description=dedent("""\
-        You are an intelligent product specifications extraction agent specialized in fashion products. 
-        Your job is to extract comprehensive, accurate product specifications from fashion e-commerce 
-        websites including materials, sizes, care instructions, and technical details.
+        You are a fashion product specifications research agent. You crawl product pages
+        and write structured research notes on materials, sizes, care, and features.
+        A separate agent formats your notes into the final JSON report.
         """),
         instructions=dedent("""\
-        You will receive a product URL. Your task is to:
-        
-        1. Product Information Extraction Phase
-            - Crawl the provided product URL thoroughly
-            - Extract basic information:
-                * Full product name/title
-                * Brand name
-                * Product category (Sneakers, Dress, Jacket, Jeans, etc.)
-                * Color/colorway
-                * Style number or SKU
-            
-        2. Material & Construction Details
-            - Extract material composition:
-                * Primary materials (e.g., 100% Cotton, Leather, Polyester blend)
-                * Fabric type (e.g., Denim, Jersey, Canvas)
-                * Special treatments or finishes
-            - Construction details:
-                * Stitching type
-                * Closure type (zipper, buttons, laces)
-                * Lining information
-        
-        3. Sizing Information
-            - List all available sizes (XS, S, M, L, XL, or numeric sizes)
-            - Note fit type (Regular Fit, Slim Fit, Oversized, etc.)
-            - Extract size chart information if available
-            - Note any sizing recommendations
-        
-        4. Care Instructions
-            - Washing instructions
-            - Drying instructions
-            - Ironing guidelines
-            - Special care notes
-        
-        5. Product Features
-            - Extract 3-7 key features:
-                * Functional features (pockets, adjustable straps, etc.)
-                * Design features (patterns, embellishments, etc.)
-                * Performance features (waterproof, breathable, etc.)
-                * Comfort features (cushioned, stretchy, etc.)
-        
-        6. Additional Specifications
-            - Dimensions (length, width, height for bags/accessories)
-            - Weight (if provided)
-            - Country of origin/manufacturing
-            - Sustainability information (recycled materials, eco-friendly, etc.)
-            - Certifications (OEKO-TEX, Fair Trade, etc.)
-        
-        7. Search for Additional Information
-            - If specifications are incomplete on the product page:
-                * Search for the product on brand's official website
-                * Search for product reviews that mention specifications
-                * Search for retailer descriptions
-            - Use search queries like:
-                * "[Brand] [Product Name] specifications"
-                * "[Product Name] material composition"
-                * "[Product Name] care instructions"
-        
-        8. Output Requirements
-            - You MUST respond strictly in the JSON schema defined by the ProductSpecification model
-            - Provide accurate, specific information (not generic descriptions)
-            - If information is not found, use null for optional fields
-            - List all sources (URLs) where you found specifications
-            - Ensure sizes_available is a list of actual sizes, not descriptions
-            - Features should be concise bullet points
-        
-        9. Quality Guidelines
-            - Prioritize official product information from brand/retailer
-            - Cross-reference information from multiple sources when possible
-            - Be specific: "100% Organic Cotton" not just "Cotton"
-            - Include technical details when available
+        You will receive a product URL. Research it:
+
+        1. Basic information (crawl the product URL with extract_url_content)
+            - Product name/title, brand, category, color/colorway, style number/SKU.
+
+        2. Material and construction
+            - Primary materials (e.g., "100% Cotton", "100% recycled polyester"),
+              fabric type, treatments/finishes, stitching, closure type, lining.
+
+        3. Sizing
+            - Available sizes, fit type (Regular/Slim/Oversized), size chart notes.
+
+        4. Care instructions
+            - Washing, drying, ironing, special care notes.
+
+        5. Features (3-7)
+            - Functional (pockets, straps), design, performance (waterproof,
+              breathable), comfort.
+
+        6. Additional specs
+            - Dimensions, weight, country of origin, sustainability info,
+              certifications (OEKO-TEX, Fair Trade, etc.).
+
+        7. Gap filling (only if the product page is missing specs)
+            - Search "[Brand] [Product] specifications", "[Product] material composition",
+              "[Product] care instructions" and crawl official/retailer pages.
+
+        8. Final answer — plain structured notes (NOT JSON). Format:
+
+            PRODUCT: <name> | <brand> | <category> | <color> | <style number> | <original URL>
+            FACT: <category: material|spec|sustainability> | <the fact, specific not generic> | <verbatim quote ≤80 words> | <source URL>
+            (one FACT line per extracted specification)
+            SOURCES: <url1>, <url2>, ...
+
+        Rules:
+            - Be specific: "100% Organic Cotton" not just "Cotton".
+            - Only include facts you actually saw on a page you visited.
+            - Every FACT line MUST contain a verbatim quote and its source URL.
+            - If a spec was not found anywhere, omit it — do not guess.
+        """),
+        add_datetime_to_context=True,
+    )
+
+
+def specs_synthesis_agent() -> Agent:
+    llm = Nebius(
+        id='nvidia/Nemotron-3-Ultra-550b-a55b',
+        api_key=os.getenv("NEBIUS_API_KEY"),
+        max_tokens=16384,
+    )
+    return Agent(
+        name="Fashion Product Specs Synthesis Agent",
+        model=llm,
+        tools=[],
+        description="Formats product spec research notes into the final JSON report.",
+        instructions=dedent("""\
+        Convert the researcher's notes into a ProductSpecification JSON.
+
+        - Do NOT invent data. Use only what appears in the notes.
+        - Map PRODUCT line to product_name, brand, category, color, style_number.
+        - Map FACT lines to material, features, sizes_available, care_instructions,
+          sustainability, fit_type, etc.
+        - For every FACT line, add a CitedClaim:
+          claim: one falsifiable sentence restating the fact
+          source_url: the FACT's source URL
+          quote: the verbatim quote from the notes (≤80 words)
+          confidence: 0.9 for direct product page crawls
+          category: the FACT's category ("material", "spec", or "sustainability")
+        - sources: the SOURCES URLs from the notes.
+        - If a spec is absent from the notes, use null (optional fields) or an empty
+          list — never fabricate.
+        - Be compact: quotes ≤40 words, omit null optional fields, keep
+          additional_specs to the 5 most useful entries. Output budget matters —
+          a truncated JSON is a failed response.
 
         CRITICAL OUTPUT FORMAT:
-            - Your final output MUST be a raw JSON object matching the ProductSpecification schema exactly.
-            - The JSON must have "product_name", "brand", "category" etc. as TOP-LEVEL keys.
-            - Do NOT wrap your output in {"response": ...} or {"result": ...} or any other container.
-            - Start with { "product_name": "..." } directly.
-
-        10. Per-claim citations (claims field)
-            - For EVERY material, feature, size, or spec fact, add a CitedClaim entry:
-                * claim: one falsifiable sentence, e.g. "Shell is 100% nylon per product page"
-                * source_url: the URL of the page where this spec was found
-                * quote: verbatim text from the page supporting the claim ≤80 words
-                * confidence: Tavily result score (0.0–1.0); use 0.9 for direct product page crawl
-                * category: "material", "spec", or "sustainability"
-            - Do NOT invent quotes. Only include a CitedClaim if you actually retrieved that page.
+        Your final output MUST be a raw JSON object matching the ProductSpecification
+        schema exactly, with "product_name", "brand", "category" etc. as top-level keys.
+        Do NOT wrap it in {"response": ...} or any container.
         """),
         output_schema=ProductSpecification,
-        add_datetime_to_context=True,
+        add_datetime_to_context=False,
         use_json_mode=True,
     )
-    return agent
 
 
 def extract_specifications(product_url: str, max_retries: int = 3) -> RunOutput:
-    payload = dedent(f"""
+    research_payload = dedent(f"""
         product_url: {product_url}
-        
-        Please extract comprehensive product specifications for this fashion product.
+
+        Research comprehensive product specifications for this fashion product.
     """)
 
-    agent = product_specs_agent()
+    research = specs_research_agent().run(
+        input=research_payload, session_id=str(uuid.uuid4()))
+    notes = research.content if isinstance(research.content, str) else str(research.content)
 
+    synth_payload = dedent(f"""
+        product_url: {product_url}
+
+        RESEARCHER NOTES:
+        {notes}
+    """)
+
+    agent = specs_synthesis_agent()
+    response = None
     for attempt in range(1, max_retries + 1):
-        response = agent.run(input=payload, session_id=str(uuid.uuid4()))
+        response = agent.run(input=synth_payload, session_id=str(uuid.uuid4()))
         try:
             _ = ProductSpecification.model_validate(response.content)
             return response
         except Exception as e:
             if attempt < max_retries:
-                logger.error(f"Attempt {attempt} failed: {e}. Retrying...")
+                logger.error(f"Synthesis attempt {attempt} failed: {e}. Retrying...")
                 continue
-            else:
-                logger.error(f"All {max_retries} attempts failed. Returning last response.")
-                return response
+            logger.error(f"All {max_retries} synthesis attempts failed.")
+            return response
+    return response
 
 
 if __name__ == "__main__":

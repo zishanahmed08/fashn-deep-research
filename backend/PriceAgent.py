@@ -50,126 +50,133 @@ class PriceComparisonResult(BaseModel):
         description="Per-claim citations: each price or availability fact with source URL, verbatim quote, and confidence score")
 
 
-def price_agent() -> Agent:
+# Two-stage pipeline: Nemotron on Nebius refuses to call tools when a
+# response_format is set, so research runs schema-free and a second,
+# tool-free call produces the schema-enforced JSON.
+def price_research_agent() -> Agent:
     llm = Nebius(
         id='nvidia/Nemotron-3-Ultra-550b-a55b',
         api_key=os.getenv("NEBIUS_API_KEY"),
         max_tokens=8192,
     )
-    agent = Agent(
-        name="Fashion Price Comparison Agent",
+    return Agent(
+        name="Fashion Price Research Agent",
         model=llm,
-        tools=[
-            TavilyTools(enable_search=True, enable_extract=True),
-        ],
+        tools=[TavilyTools(enable_search=True, enable_extract=True)],
         tool_call_limit=15,
         description=dedent("""\
-        You are an intelligent fashion price comparison agent specialized in apparel and footwear. 
-        Your job is to find the same fashion product (clothing, shoes, accessories) across multiple 
-        fashion e-commerce websites and extract their prices, availability, sizes, and seller information 
-        to help users make informed purchasing decisions.
+        You are a fashion price research agent. You crawl a product page, search other
+        retailers for the same item, verify matches, and write structured research notes.
+        A separate agent formats your notes into the final JSON report.
         """),
         instructions=dedent("""\
-        You will receive a product URL from a fashion e-commerce website. Your task is to:
-        
-        1. Product Identification Phase
-            - Crawl the provided product URL to extract:
-                * Product name/title
-                * Brand name
-                * Style number, SKU, or product code (if available)
-                * Product category (e.g., dress, jeans, sneakers, boots, jacket, etc.)
-                * Color/colorway
-                * Material/fabric composition
-                * Key design features or identifiers
-                * Current price on the original website
-                * Available sizes
-            - Identify unique product identifiers (style number, SKU, UPC, EAN, etc.)
-        
-        2. Search Phase
-            - IMPORTANT: Search for information about the place using the web_search_using_tavily function.Use the product name, brand, style number, and category to search for the same fashion item on other fashion platforms
-           
-            - IMPORTANT: Use the web_crawler function to extract information from various websites on the search results, the overall analysis MUST contain evidence that was fetched using the crawler.
-            - IMPORTANT: Crawl on all the weblinks on the search results for information
-            - Use web_search_using_tavily to find product listings with queries like:
-                * "[Brand] [Style Number] [Product Name] buy"
-                * "[Brand] [Product Name] [Color] price"
-                * "[Product Name] [Brand] fashion"
-                * "[Style Number] [Brand]"
-        
-        3. Verification Phase
-            - For each potential match found, crawl the product page to verify:
-                * It is the EXACT same fashion item (same brand, style, color, design)
-                * Extract the current price (including currency)
-                * Check availability status and size availability
-                * Note the seller/retailer information
-            - Only include listings that are confirmed to be the same product
-            - Exclude listings that are:
-                * Different colors or styles
-                * Different seasons/collections (unless explicitly the same)
-                * Used/vintage items (unless the original is also used/vintage)
-                * From unreliable or suspicious websites
-                * Counterfeit or replica items
-        
-        4. Price Extraction Guidelines
-            - Extract the final price shown to customers (after any automatic discounts)
-            - Include currency symbol with the price
-            - Note if there are shipping costs mentioned
-            - Check for any special offers or promotions
-        
-        5. Output Requirements
-            - You MUST respond strictly in the JSON schema defined by the PriceComparisonResult model
-            - Include the original product information and URL
-            - List ALL verified product listings found across different websites
-            - Provide a brief search summary including:
-                * Number of websites checked
-                * Price range found (lowest to highest)
-                * Any notable price differences or deals
-            - Include all URLs you actively used in the sources_checked field
-            - If you cannot find the product on other websites, still return the original listing
-              and explain in the search_summary why no other listings were found
+        You will receive a product URL from a fashion e-commerce website. Research it:
+
+        1. Identification
+            - Crawl the provided product URL with extract_url_content and extract:
+              product name, brand, style number/SKU, category, color, material,
+              current price (with currency), available sizes.
+
+        2. Search other retailers
+            - Use web_search_using_tavily with queries like:
+              * "[Brand] [Style Number] buy"
+              * "[Brand] [Product Name] [Color] price"
+              * "[Product Name] [Brand] fashion"
+
+        3. Verify matches
+            - Crawl 2-5 promising results with extract_url_content.
+            - Confirm each is the EXACT same item (same brand, style, color, design).
+            - Extract final customer price (incl. currency), availability, sizes, seller.
+            - Exclude different colors/styles, other seasons, used/vintage items,
+              unreliable websites, counterfeits.
+
+        4. Final answer — plain structured notes (NOT JSON). Format:
+
+            PRODUCT: <name> | <brand> | <style number> | <original price> | <original URL>
+            LISTING: <website_name> | <product_url> | <price> | <availability> | <seller> | <verbatim quote ≤80 words from that page>
+            (one LISTING line per verified listing)
+            SOURCES_CHECKED: <url1>, <url2>, ...
+            SUMMARY: <how many sites checked, price range found, notable differences; state explicitly if nothing was found>
+
+        Rules:
+            - Only include listings you actually crawled and verified.
+            - Every LISTING line MUST contain a verbatim quote from that page.
+            - Do not invent listings, prices, or quotes.
+        """),
+        add_datetime_to_context=True,
+    )
+
+
+def price_synthesis_agent() -> Agent:
+    llm = Nebius(
+        id='nvidia/Nemotron-3-Ultra-550b-a55b',
+        api_key=os.getenv("NEBIUS_API_KEY"),
+        max_tokens=16384,
+    )
+    return Agent(
+        name="Fashion Price Synthesis Agent",
+        model=llm,
+        tools=[],
+        description="Formats price research notes into the final JSON report.",
+        instructions=dedent("""\
+        Convert the researcher's notes into a PriceComparisonResult JSON.
+
+        - Do NOT invent data. Use only what appears in the notes.
+        - Map every LISTING line to one ProductListing entry.
+        - For every listing, also add one CitedClaim per price/availability fact:
+          claim: one falsifiable sentence, e.g. "Listed at €179.95 on thenorthface.com"
+          source_url: the listing's URL
+          quote: the verbatim quote from the notes (≤80 words)
+          confidence: 0.9 for direct crawls
+          category: "price" or "availability"
+        - sources_checked: copy the SOURCES_CHECKED URLs from the notes.
+        - search_summary: rewrite the SUMMARY from the notes.
+        - If the notes say nothing was found, return an empty product_listings list
+          and explain in search_summary. Never fabricate listings.
 
         CRITICAL OUTPUT FORMAT:
-            - Your final output MUST be a raw JSON object matching the PriceComparisonResult schema exactly.
-            - Use "original_product_name", "original_product_url" etc. as TOP-LEVEL keys.
-            - Do NOT wrap your output in {"response": ...} or any container object.
-
-        6. Per-claim citations (claims field)
-            - For EVERY price or availability fact, add a CitedClaim entry:
-                * claim: one falsifiable sentence, e.g. "Listed at €179.95 on thenorthface.com"
-                * source_url: the exact URL you retrieved it from
-                * quote: verbatim text from the page (price string, availability text) ≤80 words
-                * confidence: the Tavily result score (0.0–1.0); use 0.9 for direct page crawl
-                * category: "price" or "availability"
-            - Do NOT invent quotes. Only include a CitedClaim if you actually retrieved that page.
+        Your final output MUST be a raw JSON object matching the PriceComparisonResult
+        schema exactly, with "original_product_name", "original_product_url", etc. as
+        top-level keys. Do NOT wrap it in {"response": ...} or any container.
         """),
         output_schema=PriceComparisonResult,
-        add_datetime_to_context=True,
+        add_datetime_to_context=False,
         use_json_mode=True,
     )
-    return agent
 
 
 def compare_prices(product_url: str, max_retries: int = 3) -> RunOutput:
-    payload = dedent(f"""
+    research_payload = dedent(f"""
         product_url: {product_url}
-        
-        Please find this product on other e-commerce websites and compare prices.
+
+        Research this fashion product across other e-commerce websites for price comparison.
     """)
 
-    agent = price_agent()
+    research = price_research_agent().run(
+        input=research_payload, session_id=str(uuid.uuid4()))
+    notes = research.content if isinstance(research.content, str) else str(research.content)
 
+    synth_payload = dedent(f"""
+        product_url: {product_url}
+
+        RESEARCHER NOTES:
+        {notes}
+    """)
+
+    agent = price_synthesis_agent()
+    response = None
     for attempt in range(1, max_retries + 1):
-        response = agent.run(input=payload, session_id=str(uuid.uuid4()))
+        response = agent.run(input=synth_payload, session_id=str(uuid.uuid4()))
         try:
             _ = PriceComparisonResult.model_validate(response.content)
             return response
         except Exception as e:
             if attempt < max_retries:
-                logger.error(f"Attempt {attempt} failed: {e}. Retrying...")
+                logger.error(f"Synthesis attempt {attempt} failed: {e}. Retrying...")
                 continue
-            else:
-                logger.error(f"All {max_retries} attempts failed. Returning last response.")
-                return response
+            logger.error(f"All {max_retries} synthesis attempts failed.")
+            return response
+    return response
 
 
 if __name__ == "__main__":
