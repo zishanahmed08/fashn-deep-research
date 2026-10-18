@@ -129,6 +129,8 @@ def price_synthesis_agent() -> Agent:
           quote: the verbatim quote from the notes (≤80 words)
           confidence: 0.9 for direct crawls
           category: "price" or "availability"
+          kind: "fact" — a listed price/availability is directly observed on that
+            retailer's page and needs no independent corroboration.
         - sources_checked: copy the SOURCES_CHECKED URLs from the notes.
         - search_summary: rewrite the SUMMARY from the notes.
         - If the notes say nothing was found, return an empty product_listings list

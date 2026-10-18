@@ -16,6 +16,7 @@ interface CitedClaim {
 
 interface CheckedClaim extends CitedClaim {
   verdict: 'verified' | 'contested' | 'unsupported';
+  kind?: 'fact' | 'claim';
   checker_note: string;
   checker_source_url?: string;
   checker_quote?: string;
@@ -47,6 +48,11 @@ const VERDICT_LABEL: Record<string, string> = {
   unsupported: 'Unsupported',
 };
 
+const KIND_LABEL: Record<string, string> = {
+  fact: 'Fact — from source page',
+  claim: 'Claim — independently checked',
+};
+
 const CATEGORY_COLORS: Record<string, string> = {
   price: 'bg-blue-50 text-blue-700',
   material: 'bg-purple-50 text-purple-700',
@@ -69,6 +75,11 @@ function ClaimCard({ claim }: { claim: CheckedClaim }) {
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${verdictClass}`}>
               {VERDICT_LABEL[claim.verdict]}
             </span>
+            {claim.kind && (
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${claim.kind === 'fact' ? 'bg-gray-50 text-gray-600 border-gray-200' : 'bg-indigo-50 text-indigo-700 border-indigo-200'}`}>
+                {KIND_LABEL[claim.kind]}
+              </span>
+            )}
             <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${catClass}`}>
               {claim.category}
             </span>

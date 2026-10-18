@@ -19,12 +19,15 @@ logger = logging.getLogger(__name__)
 
 
 def _derive_verdict(checked: list[CheckedClaim]) -> str:
-    if not checked:
-        return "Insufficient data"
-    contested = sum(1 for c in checked if c.verdict == "contested")
-    unsupported = sum(1 for c in checked if c.verdict == "unsupported")
-    verified = sum(1 for c in checked if c.verdict == "verified")
-    total = len(checked)
+    # Verdict derives from independently-checked claims only; facts (directly
+    # observed, source-quoted) always verify and would otherwise inflate it.
+    claims = [c for c in checked if c.kind == "claim"]
+    if not claims:
+        return "Conditional — details extracted and source-quoted; no independent claims to verify"
+    contested = sum(1 for c in claims if c.verdict == "contested")
+    unsupported = sum(1 for c in claims if c.verdict == "unsupported")
+    verified = sum(1 for c in claims if c.verdict == "verified")
+    total = len(claims)
     if contested >= 2 or unsupported / total > 0.5:
         return "Skip — multiple claims contested or unsupported"
     if contested == 1:
@@ -110,15 +113,21 @@ async def run_due_diligence(product_url: str) -> DueDiligenceReport:
         except Exception as e:
             trace.append(TraceStep(agent="SpecsAgent", action="parse_error", detail=str(e)[:200]))
 
-    # Prioritise claims: material/price first, cap at 8
-    priority_order = ["price", "material", "sustainability", "review", "spec"]
-    sorted_claims = sorted(all_claims, key=lambda c: priority_order.index(c.category) if c.category in priority_order else 99)
+    # Cap at 8 items, prioritise claims (independent verification needed) over facts
+    priority_order = ["material", "sustainability", "review", "price", "spec"]
+    sorted_claims = sorted(all_claims, key=lambda c: (
+        0 if c.kind == "claim" else 1,
+        priority_order.index(c.category) if c.category in priority_order else 99,
+    ))
     batch = sorted_claims[:8]
+
+    n_facts = sum(1 for c in all_claims if c.kind == "fact")
+    n_claims = len(all_claims) - n_facts
 
     trace.append(TraceStep(
         agent="FactChecker",
         action="start",
-        detail=f"Verifying {len(batch)} claims in parallel, excluding brand domain: {brand_domain}",
+        detail=f"{n_claims} claims to verify independently ({n_facts} facts self-verified from source quotes), excluding brand domain: {brand_domain}",
     ))
 
     # Run each claim check in its own thread — parallel fact-checking
@@ -126,13 +135,13 @@ async def run_due_diligence(product_url: str) -> DueDiligenceReport:
     checked = list(await asyncio.gather(*check_tasks, return_exceptions=False))
 
     contested = [c for c in checked if c.verdict == "contested"]
-    unsupported = [c for c in checked if c.verdict == "unsupported"]
     verified_count = sum(1 for c in checked if c.verdict == "verified")
+    unsupported = [c for c in checked if c.verdict == "unsupported" and c.kind == "claim"]
 
     trace.append(TraceStep(
         agent="FactChecker",
         action="complete",
-        detail=f"verified={verified_count}, contested={len(contested)}, unsupported={len(unsupported)}",
+        detail=f"verified={verified_count}, contested={len(contested)}, unsupported={len(unsupported)} (claims only; facts self-verified)",
     ))
     for c in contested:
         trace.append(TraceStep(

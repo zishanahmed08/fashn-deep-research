@@ -2,7 +2,7 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "FashnAI — Agentic Due Diligence",
+    "title": "FashnAI \u2014 Agentic Due Diligence",
     "output": "hackathon-demo/archify-diagram.html",
     "quality_profile": "showcase",
     "repository": {
@@ -13,69 +13,397 @@
     }
   },
   "components": [
-    { "id": "user", "type": "external", "label": "Shopper", "sublabel": "browser", "pos": [40, 260], "size": [120, 60] },
-    { "id": "frontend", "type": "frontend", "label": "Next.js UI", "sublabel": "/due-diligence page", "pos": [200, 260], "size": [160, 60],
+    {
+      "id": "user",
+      "type": "external",
+      "label": "Shopper",
+      "sublabel": "browser",
+      "pos": [
+        40,
+        260
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "frontend",
+      "type": "frontend",
+      "label": "Next.js UI",
+      "sublabel": "/due-diligence page",
+      "pos": [
+        200,
+        260
+      ],
+      "size": [
+        160,
+        60
+      ],
       "sources": [
-        { "path": "frontend/app/due-diligence/page.tsx", "line": 150, "end_line": 274, "label": "DueDiligencePage" },
-        { "path": "frontend/app/due-diligence/page.tsx", "line": 59, "end_line": 118, "label": "ClaimCard" }
-      ] },
-    { "id": "api", "type": "backend", "label": "FastAPI", "sublabel": "/api/due-diligence", "pos": [420, 260], "size": [160, 60],
-      "sources": [ { "path": "backend/api.py", "line": 381, "end_line": 399, "label": "due_diligence()" } ] },
-    { "id": "orchestrator", "type": "backend", "label": "DiligenceOrchestrator", "sublabel": "planner", "pos": [640, 260], "size": [170, 60],
+        {
+          "path": "frontend/app/due-diligence/page.tsx",
+          "line": 150,
+          "end_line": 274,
+          "label": "DueDiligencePage"
+        },
+        {
+          "path": "frontend/app/due-diligence/page.tsx",
+          "line": 59,
+          "end_line": 118,
+          "label": "ClaimCard"
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "FastAPI",
+      "sublabel": "/api/due-diligence",
+      "pos": [
+        420,
+        260
+      ],
+      "size": [
+        160,
+        60
+      ],
       "sources": [
-        { "path": "backend/DiligenceOrchestrator.py", "line": 37, "end_line": 53, "label": "run_due_diligence()" },
-        { "path": "backend/DiligenceOrchestrator.py", "line": 107, "end_line": 131, "label": "verdict from checked claims" }
-      ] },
-    { "id": "priceAgent", "type": "backend", "label": "PriceAgent", "sublabel": "price comparison", "pos": [870, 120], "size": [160, 60],
-      "sources": [ { "path": "backend/PriceAgent.py", "line": 162, "end_line": 191, "label": "compare_prices()" } ] },
-    { "id": "reviewAgent", "type": "backend", "label": "ReviewAnalyzerAgent", "sublabel": "review sentiment", "pos": [870, 260], "size": [160, 60],
-      "sources": [ { "path": "backend/ReviewAnalyzerAgent.py", "line": 141, "end_line": 170, "label": "analyze_reviews()" } ] },
-    { "id": "specsAgent", "type": "backend", "label": "ProductSpecsAgent", "sublabel": "spec extraction", "pos": [870, 400], "size": [160, 60],
-      "sources": [ { "path": "backend/ProductSpecsAgent.py", "line": 157, "end_line": 186, "label": "extract_specifications()" } ] },
-    { "id": "nebius", "type": "external", "label": "Nebius Token Factory", "sublabel": "Nemotron-3-Super-120B", "tag": "primary inference", "pos": [860, 20], "size": [180, 60],
-      "sources": [ { "path": "backend/FactCheckerAgent.py", "line": 24, "end_line": 27, "label": "model id" } ] },
-    { "id": "retailers", "type": "external", "label": "Brand & Retailer Sites", "sublabel": "Zalando, ASOS, The North Face…", "pos": [1090, 460], "size": [180, 60] },
-    { "id": "factChecker", "type": "backend", "label": "FactCheckerAgent", "sublabel": "skeptical verifier", "tag": "excludes brand domain", "pos": [1340, 260], "size": [180, 60],
+        {
+          "path": "backend/api.py",
+          "line": 381,
+          "end_line": 399,
+          "label": "due_diligence()"
+        }
+      ]
+    },
+    {
+      "id": "orchestrator",
+      "type": "backend",
+      "label": "DiligenceOrchestrator",
+      "sublabel": "planner",
+      "pos": [
+        640,
+        260
+      ],
+      "size": [
+        170,
+        60
+      ],
       "sources": [
-        { "path": "backend/FactCheckerAgent.py", "line": 59, "end_line": 72, "label": "fact_checker_agent()" },
-        { "path": "backend/FactCheckerAgent.py", "line": 74, "end_line": 106, "label": "check_claims()" }
-      ] },
-    { "id": "tavily", "type": "external", "label": "Tavily", "sublabel": "search + extract", "tag": "independent sources only", "pos": [1340, 460], "size": [180, 60],
-      "sources": [ { "path": "backend/FactCheckerAgent.py", "line": 63, "end_line": 63, "label": "TavilyTools(...)" } ] }
+        {
+          "path": "backend/DiligenceOrchestrator.py",
+          "line": 37,
+          "end_line": 53,
+          "label": "run_due_diligence()"
+        },
+        {
+          "path": "backend/DiligenceOrchestrator.py",
+          "line": 107,
+          "end_line": 131,
+          "label": "verdict from checked claims"
+        }
+      ]
+    },
+    {
+      "id": "priceAgent",
+      "type": "backend",
+      "label": "PriceAgent",
+      "sublabel": "price comparison",
+      "pos": [
+        870,
+        120
+      ],
+      "size": [
+        160,
+        60
+      ],
+      "sources": [
+        {
+          "path": "backend/PriceAgent.py",
+          "line": 162,
+          "end_line": 191,
+          "label": "compare_prices()"
+        }
+      ]
+    },
+    {
+      "id": "reviewAgent",
+      "type": "backend",
+      "label": "ReviewAnalyzerAgent",
+      "sublabel": "review sentiment",
+      "pos": [
+        870,
+        260
+      ],
+      "size": [
+        160,
+        60
+      ],
+      "sources": [
+        {
+          "path": "backend/ReviewAnalyzerAgent.py",
+          "line": 141,
+          "end_line": 170,
+          "label": "analyze_reviews()"
+        }
+      ]
+    },
+    {
+      "id": "specsAgent",
+      "type": "backend",
+      "label": "ProductSpecsAgent",
+      "sublabel": "spec extraction",
+      "pos": [
+        870,
+        400
+      ],
+      "size": [
+        160,
+        60
+      ],
+      "sources": [
+        {
+          "path": "backend/ProductSpecsAgent.py",
+          "line": 157,
+          "end_line": 186,
+          "label": "extract_specifications()"
+        }
+      ]
+    },
+    {
+      "id": "nebius",
+      "type": "external",
+      "label": "Nebius Token Factory",
+      "sublabel": "Nemotron-3-Ultra-550B",
+      "tag": "primary inference",
+      "pos": [
+        860,
+        20
+      ],
+      "size": [
+        180,
+        60
+      ],
+      "sources": [
+        {
+          "path": "backend/FactCheckerAgent.py",
+          "line": 24,
+          "end_line": 27,
+          "label": "model id"
+        }
+      ]
+    },
+    {
+      "id": "retailers",
+      "type": "external",
+      "label": "Brand & Retailer Sites",
+      "sublabel": "Zalando, ASOS, The North Face\u2026",
+      "pos": [
+        1090,
+        460
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "factChecker",
+      "type": "backend",
+      "label": "FactCheckerAgent",
+      "sublabel": "skeptical verifier \u2014 claims independently checked, facts source-quoted",
+      "tag": "excludes brand domain",
+      "pos": [
+        1340,
+        260
+      ],
+      "size": [
+        180,
+        60
+      ],
+      "sources": [
+        {
+          "path": "backend/FactCheckerAgent.py",
+          "line": 59,
+          "end_line": 72,
+          "label": "fact_checker_agent()"
+        },
+        {
+          "path": "backend/FactCheckerAgent.py",
+          "line": 74,
+          "end_line": 106,
+          "label": "check_claims()"
+        }
+      ]
+    },
+    {
+      "id": "tavily",
+      "type": "external",
+      "label": "Tavily",
+      "sublabel": "search + extract",
+      "tag": "independent sources only",
+      "pos": [
+        1340,
+        460
+      ],
+      "size": [
+        180,
+        60
+      ],
+      "sources": [
+        {
+          "path": "backend/FactCheckerAgent.py",
+          "line": 63,
+          "end_line": 63,
+          "label": "TavilyTools(...)"
+        }
+      ]
+    }
   ],
   "boundaries": [
-    { "kind": "region", "label": "FashnAI backend — Python / FastAPI / Agno", "wraps": ["api", "orchestrator", "priceAgent", "reviewAgent", "specsAgent", "factChecker"] }
+    {
+      "kind": "region",
+      "label": "FashnAI backend \u2014 Python / FastAPI / Agno",
+      "wraps": [
+        "api",
+        "orchestrator",
+        "priceAgent",
+        "reviewAgent",
+        "specsAgent",
+        "factChecker"
+      ]
+    }
   ],
   "connections": [
-    { "id": "user-frontend", "from": "user", "to": "frontend", "label": "paste product URL" },
-    { "id": "frontend-api", "from": "frontend", "to": "api", "label": "POST /api/due-diligence", "variant": "emphasis" },
-    { "id": "api-orchestrator", "from": "api", "to": "orchestrator", "label": "run_due_diligence()" },
-    { "id": "orchestrator-price", "from": "orchestrator", "to": "priceAgent", "label": "parallel dispatch", "variant": "dashed" },
-    { "id": "orchestrator-review", "from": "orchestrator", "to": "reviewAgent", "label": "parallel dispatch", "variant": "dashed" },
-    { "id": "orchestrator-specs", "from": "orchestrator", "to": "specsAgent", "label": "parallel dispatch", "variant": "dashed" },
-    { "id": "price-nebius", "from": "priceAgent", "to": "nebius", "label": "inference" },
-    { "id": "review-nebius", "from": "reviewAgent", "to": "nebius", "label": "inference" },
-    { "id": "specs-nebius", "from": "specsAgent", "to": "nebius", "label": "inference" },
-    { "id": "price-retailers", "from": "priceAgent", "to": "retailers", "label": "search + crawl" },
-    { "id": "review-retailers", "from": "reviewAgent", "to": "retailers", "label": "search + crawl" },
-    { "id": "specs-retailers", "from": "specsAgent", "to": "retailers", "label": "search + crawl" },
-    { "id": "orchestrator-factchecker", "from": "orchestrator", "to": "factChecker", "label": "cited claims", "variant": "emphasis" },
-    { "id": "factchecker-nebius", "from": "factChecker", "to": "nebius", "label": "verify" },
-    { "id": "factchecker-tavily", "from": "factChecker", "to": "tavily", "label": "web_search_using_tavily", "variant": "emphasis" },
-    { "id": "factchecker-api", "from": "factChecker", "to": "api", "label": "verdict + checked claims" }
+    {
+      "id": "user-frontend",
+      "from": "user",
+      "to": "frontend",
+      "label": "paste product URL"
+    },
+    {
+      "id": "frontend-api",
+      "from": "frontend",
+      "to": "api",
+      "label": "POST /api/due-diligence",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-orchestrator",
+      "from": "api",
+      "to": "orchestrator",
+      "label": "run_due_diligence()"
+    },
+    {
+      "id": "orchestrator-price",
+      "from": "orchestrator",
+      "to": "priceAgent",
+      "label": "parallel dispatch",
+      "variant": "dashed"
+    },
+    {
+      "id": "orchestrator-review",
+      "from": "orchestrator",
+      "to": "reviewAgent",
+      "label": "parallel dispatch",
+      "variant": "dashed"
+    },
+    {
+      "id": "orchestrator-specs",
+      "from": "orchestrator",
+      "to": "specsAgent",
+      "label": "parallel dispatch",
+      "variant": "dashed"
+    },
+    {
+      "id": "price-nebius",
+      "from": "priceAgent",
+      "to": "nebius",
+      "label": "inference"
+    },
+    {
+      "id": "review-nebius",
+      "from": "reviewAgent",
+      "to": "nebius",
+      "label": "inference"
+    },
+    {
+      "id": "specs-nebius",
+      "from": "specsAgent",
+      "to": "nebius",
+      "label": "inference"
+    },
+    {
+      "id": "price-retailers",
+      "from": "priceAgent",
+      "to": "retailers",
+      "label": "search + crawl"
+    },
+    {
+      "id": "review-retailers",
+      "from": "reviewAgent",
+      "to": "retailers",
+      "label": "search + crawl"
+    },
+    {
+      "id": "specs-retailers",
+      "from": "specsAgent",
+      "to": "retailers",
+      "label": "search + crawl"
+    },
+    {
+      "id": "orchestrator-factchecker",
+      "from": "orchestrator",
+      "to": "factChecker",
+      "label": "cited claims",
+      "variant": "emphasis"
+    },
+    {
+      "id": "factchecker-nebius",
+      "from": "factChecker",
+      "to": "nebius",
+      "label": "verify"
+    },
+    {
+      "id": "factchecker-tavily",
+      "from": "factChecker",
+      "to": "tavily",
+      "label": "web_search_using_tavily",
+      "variant": "emphasis"
+    },
+    {
+      "id": "factchecker-api",
+      "from": "factChecker",
+      "to": "api",
+      "label": "verdict + checked claims"
+    }
   ],
   "cards": [
-    { "dot": "emerald", "title": "Same agents, new job", "items": [
-      "PriceAgent, ReviewAnalyzerAgent and ProductSpecsAgent are the same agents behind FashnAI's everyday price-comparison product",
-      "Due diligence reuses them unchanged and adds a fourth agent that checks their work"
-    ] },
-    { "dot": "violet", "title": "Also in FashnAI (not shown here)", "items": [
-      "VirtualTryOnAgent — Nebius for fit analysis, Gemini 3 Flash Image for the try-on photo",
-      "x402 payment middleware — agents pay $0.02–$0.05 in USDC per request on Base Sepolia"
-    ] },
-    { "dot": "rose", "title": "Skeptical by design", "items": [
-      "FactCheckerAgent is explicitly instructed to exclude the brand's own domain from its Tavily searches",
-      "Verdict rules: verified / contested / unsupported — one contested claim downgrades the whole report"
-    ] }
+    {
+      "dot": "emerald",
+      "title": "Same agents, new job",
+      "items": [
+        "PriceAgent, ReviewAnalyzerAgent and ProductSpecsAgent are the same agents behind FashnAI's everyday price-comparison product",
+        "Due diligence reuses them unchanged and adds a fourth agent that checks their work"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Also in FashnAI (not shown here)",
+      "items": [
+        "VirtualTryOnAgent \u2014 Nebius for fit analysis, Gemini 3 Flash Image for the try-on photo",
+        "x402 payment middleware \u2014 agents pay $0.02\u2013$0.05 in USDC per request on Base Sepolia"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Skeptical by design",
+      "items": [
+        "FactCheckerAgent is explicitly instructed to exclude the brand's own domain from its Tavily searches",
+        "Facts (name, listed price, sizes, care) are self-verified by their source quote; only claims (materials, sustainability, performance, ratings) get independent Tavily verification",
+        "Verdict rules: verified / contested / unsupported \u2014 one contested claim downgrades the whole report"
+      ]
+    }
   ]
 }

@@ -4,7 +4,7 @@ Everything needed to record and cut the 2-minute submission video for the **Agen
 
 | File | What it's for |
 |---|---|
-| [DEMO_SCRIPT.md](DEMO_SCRIPT.md) | Timed, beat-by-beat script (0:00–2:00) — voiceover + what's on screen |
+| [DEMO_SCRIPT.md](DEMO_SCRIPT.md) | **The one script to use** — beats + read-aloud VO lines + tab setup + timing checkpoints + fallbacks + recording checklist (0:00–2:00) |
 | [EDITING_GUIDE.md](EDITING_GUIDE.md) | Free tools + concrete effect recipes (R1–R8) referenced from the script |
 | `archify-diagram.html` | **Done.** Interactive architecture diagram generated with [Archify](https://github.com/tt-a1i/archify), validated against this repo's actual code at commit `636d205c`. Double-click to open in any browser — pan/zoom, click a node to see its source citation (file + line range), use Live/Still to toggle motion. This is the opening/closing visual in the script. |
 

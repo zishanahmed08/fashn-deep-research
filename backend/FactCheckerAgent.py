@@ -82,6 +82,24 @@ def _tavily_search(query: str, brand_domain: str, max_results: int = 5) -> list[
 
 
 def _check_one(claim: CitedClaim, brand_domain: str) -> CheckedClaim:
+    base = dict(
+        claim=claim.claim,
+        source_url=claim.source_url,
+        quote=claim.quote,
+        confidence=claim.confidence,
+        category=claim.category,
+        kind=claim.kind,
+    )
+
+    # Facts (product name, listed price, sizes, ...) are directly observed on the
+    # source page — the verbatim quote is the verification. No independent search.
+    if claim.kind == "fact":
+        return CheckedClaim(
+            **base,
+            verdict="verified",
+            checker_note="Directly observed on the source page; verbatim quote confirms it. Facts are not independently corroborated.",
+        )
+
     # Build search query from the claim
     query = f"{claim.claim} independent review verification"
 
@@ -89,11 +107,7 @@ def _check_one(claim: CitedClaim, brand_domain: str) -> CheckedClaim:
 
     if not results:
         return CheckedClaim(
-            claim=claim.claim,
-            source_url=claim.source_url,
-            quote=claim.quote,
-            confidence=claim.confidence,
-            category=claim.category,
+            **base,
             verdict="unsupported",
             checker_note="No independent search results found.",
         )
@@ -115,11 +129,7 @@ def _check_one(claim: CitedClaim, brand_domain: str) -> CheckedClaim:
         response = agent.run(input=payload, session_id=str(uuid.uuid4()))
         result = SingleCheckResult.model_validate(response.content)
         return CheckedClaim(
-            claim=claim.claim,
-            source_url=claim.source_url,
-            quote=claim.quote,
-            confidence=claim.confidence,
-            category=claim.category,
+            **base,
             verdict=result.verdict,
             checker_note=result.checker_note,
             checker_source_url=result.checker_source_url,
@@ -128,11 +138,7 @@ def _check_one(claim: CitedClaim, brand_domain: str) -> CheckedClaim:
     except Exception as e:
         logger.warning(f"Verdict agent failed for '{claim.claim[:60]}': {e}")
         return CheckedClaim(
-            claim=claim.claim,
-            source_url=claim.source_url,
-            quote=claim.quote,
-            confidence=claim.confidence,
-            category=claim.category,
+            **base,
             verdict="unsupported",
             checker_note=f"Check failed: {str(e)[:120]}",
         )

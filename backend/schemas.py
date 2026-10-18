@@ -8,6 +8,9 @@ class CitedClaim(BaseModel):
     quote: str = Field(..., description="Verbatim excerpt (≤80 words) from the source that supports the claim")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Tavily result score or LLM-estimated confidence")
     category: str = Field(..., description="One of: price, material, review, availability, spec, sustainability")
+    kind: Literal["fact", "claim"] = Field(
+        "claim",
+        description="fact: directly observed on the source page (name, brand, category, listed price, sizes) — self-verified by the source quote. claim: assertion about the world needing independent corroboration (material composition, sustainability, performance, ratings)")
 
 
 class CheckedClaim(BaseModel):
@@ -16,6 +19,7 @@ class CheckedClaim(BaseModel):
     quote: str
     confidence: float
     category: str
+    kind: Literal["fact", "claim"] = "claim"
     verdict: Literal["verified", "contested", "unsupported"]
     checker_note: str = Field(..., description="What the fact-checker found or failed to find")
     checker_source_url: Optional[str] = None

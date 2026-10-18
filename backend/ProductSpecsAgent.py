@@ -131,6 +131,12 @@ def specs_synthesis_agent() -> Agent:
           quote: the verbatim quote from the notes (≤80 words)
           confidence: 0.9 for direct product page crawls
           category: the FACT's category ("material", "spec", or "sustainability")
+          kind: "fact" for directly observed page attributes (product name, brand,
+            category, color, style number, listed sizes, care instructions) — these
+            are self-verified by the source quote. "claim" for assertions about the
+            world that deserve independent corroboration (material composition,
+            sustainability certifications, performance numbers like waterproof
+            ratings or insulation weight).
         - sources: the SOURCES URLs from the notes.
         - If a spec is absent from the notes, use null (optional fields) or an empty
           list — never fabricate.
