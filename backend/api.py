@@ -126,7 +126,7 @@ def health_check():
     return {
         "status": "healthy",
         "service": "FashnAI API",
-        "model": "openai/gpt-oss-120b (Nebius)",
+        "model": "deepseek-ai/DeepSeek-V4-Flash-0731 (Nebius)",
         "payments": "x402 USDC"
     }
 

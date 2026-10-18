@@ -24,8 +24,9 @@ load_dotenv()
 
 # Use Nebius API for all agents with SQLite database
 llm = Nebius(
-    id='openai/gpt-oss-120b',
+    id='deepseek-ai/DeepSeek-V4-Flash-0731',
     api_key=os.getenv("NEBIUS_API_KEY"),
+    max_tokens=8192,
 )
 
 

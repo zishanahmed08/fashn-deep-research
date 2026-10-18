@@ -24,6 +24,7 @@ load_dotenv()
 llm = Nebius(
     id="nvidia/nemotron-3-super-120b-a12b",  # confirmed: tool calling + JSON output
     api_key=os.getenv("NEBIUS_API_KEY"),
+    max_tokens=8192,
 )
 
 
