@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 from PriceAgent import compare_prices, PriceComparisonResult
 from ReviewAnalyzerAgent import analyze_reviews, ReviewAnalysis
 from ProductSpecsAgent import extract_specifications, ProductSpecification
-from FactCheckerAgent import check_claims, extract_domain
+from FactCheckerAgent import _check_one, extract_domain
 from schemas import CitedClaim, CheckedClaim, TraceStep, DueDiligenceReport
 
 logger = logging.getLogger(__name__)
@@ -104,13 +104,20 @@ async def run_due_diligence(product_url: str) -> DueDiligenceReport:
         except Exception as e:
             trace.append(TraceStep(agent="SpecsAgent", action="parse_error", detail=str(e)[:200]))
 
+    # Prioritise claims: material/price first, cap at 8
+    priority_order = ["price", "material", "sustainability", "review", "spec"]
+    sorted_claims = sorted(all_claims, key=lambda c: priority_order.index(c.category) if c.category in priority_order else 99)
+    batch = sorted_claims[:8]
+
     trace.append(TraceStep(
         agent="FactChecker",
         action="start",
-        detail=f"Verifying {len(all_claims)} claims, excluding brand domain: {brand_domain}",
+        detail=f"Verifying {len(batch)} claims in parallel, excluding brand domain: {brand_domain}",
     ))
 
-    checked = check_claims(all_claims, brand_domain=brand_domain)
+    # Run each claim check in its own thread — parallel fact-checking
+    check_tasks = [asyncio.to_thread(_check_one, claim, brand_domain) for claim in batch]
+    checked = list(await asyncio.gather(*check_tasks, return_exceptions=False))
 
     contested = [c for c in checked if c.verdict == "contested"]
     unsupported = [c for c in checked if c.verdict == "unsupported"]

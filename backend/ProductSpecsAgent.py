@@ -20,13 +20,6 @@ logger.addHandler(handler)
 
 load_dotenv()
 
-# Use Nebius API for all agents
-llm = Nebius(
-    id='nvidia/Nemotron-3-Ultra-550b-a55b',
-    api_key=os.getenv("NEBIUS_API_KEY"),
-    max_tokens=8192,
-)
-
 
 class ProductSpecification(BaseModel):
     product_name: str = Field(..., description="Full product name/title")
@@ -51,6 +44,11 @@ class ProductSpecification(BaseModel):
 
 
 def product_specs_agent() -> Agent:
+    llm = Nebius(
+        id='nvidia/Nemotron-3-Ultra-550b-a55b',
+        api_key=os.getenv("NEBIUS_API_KEY"),
+        max_tokens=8192,
+    )
     agent = Agent(
         name="Fashion Product Specifications Agent",
         model=llm,
@@ -134,6 +132,12 @@ def product_specs_agent() -> Agent:
             - Cross-reference information from multiple sources when possible
             - Be specific: "100% Organic Cotton" not just "Cotton"
             - Include technical details when available
+
+        CRITICAL OUTPUT FORMAT:
+            - Your final output MUST be a raw JSON object matching the ProductSpecification schema exactly.
+            - The JSON must have "product_name", "brand", "category" etc. as TOP-LEVEL keys.
+            - Do NOT wrap your output in {"response": ...} or {"result": ...} or any other container.
+            - Start with { "product_name": "..." } directly.
 
         10. Per-claim citations (claims field)
             - For EVERY material, feature, size, or spec fact, add a CitedClaim entry:
